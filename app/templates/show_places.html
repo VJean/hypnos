@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home | Places</title>
+</head>
+
+<body>
+    <h1>Places</h1>
+    <ul>
+        {% for place in places %}
+        <li>{{ place.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

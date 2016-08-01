@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home | Sleep</title>
+</head>
+
+<body>
+    <h1>Sleep Items</h1>
+    <table border="1px solid black">
+        <tr>
+            <th>De</th><th>À</th><th>Durée</th><th>Seul</th><th>Endroit</th>
+        </tr>
+        {% for item in sleepitems %}
+        <tr>
+            <td>{{ item.to_bed }}</td>
+            <td>{{ item.to_rise }}</td>
+            <td>{{ item.amount }}</td>
+            <td>{{ item.alone }}</td>
+            <td>{{ item.place.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

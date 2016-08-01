@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home | Welcome</title>
+    <script src="http://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <style type="text/css">
+        body {
+            background-size: cover;
+            background-image: url({{ nugget.img }});
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Hello there.</h1>
+    <p><a href="{{ nugget.post }}" id="post-link">{{ nugget.title }}</a></p>
+</body>
+</html>
