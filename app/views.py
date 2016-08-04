@@ -2,6 +2,7 @@ from app import app, db
 from app import models
 from flask import render_template, jsonify, request, abort
 from fetch_posts import get_random_redditnugget
+import isodate
 
 
 @app.route('/')
@@ -115,9 +116,13 @@ def update_sleepitem(sid):
         abort(404)
     if not request.json:
         abort(400)
-    s.to_bed = request.json.get('to_bed', s.to_bed)
-    s.to_rise = request.json.get('to_rise', s.to_rise)
-    s.amount = request.json.get('amount', s.amount)
+
+    if 'to_bed' in request.json:
+        s.to_bed = isodate.parse_datetime(request.json.get('to_bed'))
+    if 'to_rise' in request.json:
+        s.to_rise = isodate.parse_datetime(request.json.get('to_rise'))
+    if 'amount' in request.json and request.json.get('amount'):
+        s.amount = isodate.parse_duration(request.json.get('amount'))
     s.alone = request.json.get('alone', s.alone)
     if 'place_id' in request.json:
         s.place = models.Place.query.get(request.json.get('place_id'))
