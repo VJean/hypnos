@@ -74,7 +74,6 @@ class Place(db.Model):
     __tablename__ = 'places'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), index=True, unique=True)
-    # sleepitems = db.relationship("SleepItem", backref="sleepitem", lazy='dynamic')
 
     def __init__(self, name):
         self.name = name

@@ -6,6 +6,12 @@
 
 <body>
     <h1>Sleep Items</h1>
+    
+    <div style="width:70%">
+        <canvas id="chartCanvas"></canvas>
+    </div>
+
+
     <table border="1px solid black">
         <tr>
             <th>De</th><th>À</th><th>Durée</th><th>Seul</th><th>Endroit</th>
@@ -20,5 +26,38 @@
         </tr>
         {% endfor %}
     </table>
+
+    <script type="text/javascript" src="/static/js/moment.js"></script>
+    <script type="text/javascript" src="/static/js/Chart.min.js"></script>
+    <!-- <script type="text/javascript" src="/static/js/sleepitems_charts.js"></script> -->
+    <script type="text/javascript">
+        var myLabels = {{ amountchart.x|tojson|safe }}
+        var myData = {{ amountchart.y|tojson|safe }}
+
+
+        var ctx = document.getElementById("chartCanvas");
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: myLabels,
+                datasets: [{
+                    label: 'Durée de sommeil',
+                    data: myData
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time'
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@ from app import models
 from flask import render_template, jsonify, request, abort
 from fetch_posts import get_random_redditnugget
 import isodate
-
+import datetime
 
 @app.route('/')
 def homepage():
@@ -20,7 +20,13 @@ def show_notes():
 @app.route('/sleep', methods=['GET'])
 def show_sleepitems():
     sleepitems = models.SleepItem.query.all()
-    return render_template('show_sleepitems.html', sleepitems=sleepitems)
+    dates = []
+    durations = []
+    for i in sleepitems:
+        dates.append(i.to_rise.date().isoformat())
+        durations.append(i.amount.total_seconds() / 3600)
+    a = {'x': dates, 'y': durations}
+    return render_template('show_sleepitems.html', sleepitems=sleepitems, amountchart=a)
 
 
 @app.route('/places', methods=['GET'])
