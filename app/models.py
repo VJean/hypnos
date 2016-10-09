@@ -13,6 +13,7 @@ def dump_datetime(value):
 
 
 class Note(db.Model):
+    __tablename__ = 'notes'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, index=True, unique=True)
     timestamp = db.Column(db.DateTime, index=True, unique=True)
@@ -34,8 +35,8 @@ class Note(db.Model):
         }
 
 
-class SleepItem(db.Model):
-    __tablename__ = 'sleep'
+class Night(db.Model):
+    __tablename__ = 'nights'
     id = db.Column(db.Integer, primary_key=True)
     to_bed = db.Column(db.DateTime, unique=True)
     to_rise = db.Column(db.DateTime, unique=True)
@@ -55,7 +56,7 @@ class SleepItem(db.Model):
         self.place = place
 
     def __repr__(self):
-        return '<SleepItem from %r to %r>' % (self.to_bed, self.to_rise)
+        return '<Night from %r to %r>' % (self.to_bed, self.to_rise)
 
     @property
     def serialize(self):

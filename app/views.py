@@ -5,6 +5,7 @@ from fetch_posts import get_random_redditnugget
 import isodate
 import datetime
 
+
 @app.route('/')
 def homepage():
     n = get_random_redditnugget()
@@ -17,16 +18,16 @@ def show_notes():
     return render_template('show_notes.html', notes=notes)
 
 
-@app.route('/sleep', methods=['GET'])
-def show_sleepitems():
-    sleepitems = models.SleepItem.query.all()
+@app.route('/nights', methods=['GET'])
+def show_nights():
+    nights = models.Night.query.all()
     dates = []
     durations = []
-    for i in sleepitems:
+    for i in nights:
         dates.append(i.to_rise.date().isoformat())
         durations.append(i.amount.total_seconds() / 3600)
     a = {'x': dates, 'y': durations}
-    return render_template('show_sleepitems.html', sleepitems=sleepitems, amountchart=a)
+    return render_template('show_nights.html', nights=nights, amountchart=a)
 
 
 @app.route('/places', methods=['GET'])
@@ -83,30 +84,30 @@ def update_note(nid):
 
 # SleepItems
 
-@app.route('/api/sleep', methods=['GET'])
-def get_sleepitems():
-    return jsonify({'sleepitems': [i.serialize for i in models.SleepItem.query.all()]})
+@app.route('/api/nights', methods=['GET'])
+def get_nights():
+    return jsonify({'nights': [i.serialize for i in models.Night.query.all()]})
 
 
-@app.route('/api/sleep', methods=['POST'])
-def create_sleepitem():
+@app.route('/api/nights', methods=['POST'])
+def create_night():
     if not request.json or 'to_bed' not in request.json:
         abort(400)
     place = models.Place.query.get(request.json.get('place_id'))
-    item = models.SleepItem(request.json.get('to_bed'), request.json.get('to_rise'), request.json.get('amount'), request.json.get('alone'), place)
+    item = models.Night(request.json.get('to_bed'), request.json.get('to_rise'), request.json.get('amount'), request.json.get('alone'), place)
     db.session.add(item)
     db.session.commit()
     return jsonify({'item': item.serialize}), 201
 
 
-@app.route('/api/sleep/<int:sid>', methods=['GET'])
-def get_sleepitem(sid):
-    return jsonify({'item': models.SleepItem.query.filter(models.SleepItem.id == sid).first().serialize})
+@app.route('/api/nights/<int:sid>', methods=['GET'])
+def get_night(sid):
+    return jsonify({'item': models.Night.query.filter(models.Night.id == sid).first().serialize})
 
 
-@app.route('/api/sleep/<int:sid>', methods=['DELETE'])
-def delete_sleepitem(sid):
-    s = models.SleepItem.query.get(sid)
+@app.route('/api/nights/<int:sid>', methods=['DELETE'])
+def delete_night(sid):
+    s = models.Night.query.get(sid)
     if s is None:
         abort(404)
 
@@ -115,9 +116,9 @@ def delete_sleepitem(sid):
     return jsonify({'result': True})
 
 
-@app.route('/api/sleep/<int:sid>', methods=['PUT'])
-def update_sleepitem(sid):
-    s = models.SleepItem.query.get(sid)
+@app.route('/api/nights/<int:sid>', methods=['PUT'])
+def update_night(sid):
+    s = models.Night.query.get(sid)
     if s is None:
         abort(404)
     if not request.json:

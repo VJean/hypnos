@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home | Sleep</title>
+    <title>Home | Nights</title>
 </head>
 
 <body>
-    <h1>Sleep Items</h1>
+    <h1>Nights</h1>
     
     <div style="width:70%">
         <canvas id="chartCanvas"></canvas>
@@ -16,7 +16,7 @@
         <tr>
             <th>De</th><th>À</th><th>Durée</th><th>Seul</th><th>Endroit</th>
         </tr>
-        {% for item in sleepitems %}
+        {% for item in nights %}
         <tr>
             <td>{{ item.to_bed }}</td>
             <td>{{ item.to_rise }}</td>
@@ -27,9 +27,11 @@
         {% endfor %}
     </table>
 
-    <script type="text/javascript" src="/static/js/moment.js"></script>
-    <script type="text/javascript" src="/static/js/Chart.min.js"></script>
-    <!-- <script type="text/javascript" src="/static/js/sleepitems_charts.js"></script> -->
+    <!-- moment.js with locales -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment-with-locales.min.js"></script>
+    <!-- Chart.js -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+    
     <script type="text/javascript">
         var myLabels = {{ amountchart.x|tojson|safe }}
         var myData = {{ amountchart.y|tojson|safe }}

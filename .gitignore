@@ -3,3 +3,5 @@ bg_urls.json
 app.db
 __pycache__
 app/__pycache__
+*.pyc
+migrations/
