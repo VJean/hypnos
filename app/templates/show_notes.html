@@ -2,14 +2,64 @@
 <html>
 <head>
     <title>Home | Notes</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+              integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+              crossorigin="anonymous"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
 </head>
 
 <body>
-    <h1>Notes</h1>
-    <ul>
-        {% for note in notes %}
-        <li>{{ note.content }}</li>
-        {% endfor %}
-    </ul>
+    <div id="notesMain" class="container">
+        <h1>Notes</h1>
+        <span id="notesCount" data-bind="text: notesArray().length"></span> notes.
+        <ul data-bind="foreach: notesArray">
+            <li data-bind="text: content"></li>
+        </ul>
+
+        <input type="text" id="newNoteText"/>
+        <button class="btn btn-large" data-bind="click: addNote" >Ajouter</button>
+    </div>
+
+    <script type="text/javascript">
+        function NotesViewModel(){
+            var self = this;
+
+            self.notesArray = ko.observableArray()
+            
+            $.getJSON('http://localhost:5000/api/notes', function(data){
+                self.notesArray(data['notes'])
+            });
+        
+            self.addNote = function(){
+                text = $("#newNoteText").val()
+                $.ajax({
+                    url: 'http://localhost:5000/api/notes',
+                    type:"POST",
+                    data: JSON.stringify({'content': text}),
+                    contentType:"application/json",
+                    dataType:"json",
+                    success: function(data){
+                        self.notesArray.push({
+                            id: ko.observable(data.note.id),
+                            content: ko.observable(data.note.content),
+                            timestamp: ko.observable(data.note.timestamp),
+                            done: ko.observable(data.note.done)
+                        })
+                    }
+                })
+            };
+        }
+
+        
+
+        var notesViewModel = new NotesViewModel()
+        ko.applyBindings(notesViewModel, $("#notesMain")[0])
+
+
+    </script>
 </body>
 </html>
