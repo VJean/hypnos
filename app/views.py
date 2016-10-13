@@ -78,6 +78,7 @@ def update_note(nid):
     if not request.json:
         abort(400)
     n.content = request.json.get('content', n.content)
+    n.done = request.json.get('done', n.done)
     db.session.commit()
     return jsonify({'note': n.serialize})
 
