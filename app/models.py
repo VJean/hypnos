@@ -17,9 +17,11 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, index=True, unique=True)
     timestamp = db.Column(db.DateTime, index=True, unique=True)
+    done = db.Column(db.Boolean)
 
-    def __init__(self, content):
+    def __init__(self, content, done=False):
         self.content = content
+        self.done = done
         self.timestamp = datetime.utcnow()
 
     def __repr__(self):
@@ -31,6 +33,7 @@ class Note(db.Model):
         return {
            'id'       : self.id,
            'content'  : self.content,
+           'done'     : self.done,
            'timestamp': dump_datetime(self.timestamp)
         }
 
