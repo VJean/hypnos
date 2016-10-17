@@ -3,7 +3,6 @@ from app import models
 from flask import render_template, jsonify, request, abort
 from fetch_posts import get_random_redditnugget
 import isodate
-import datetime
 
 
 @app.route('/')
@@ -41,7 +40,8 @@ def show_places():
 
 @app.route('/api/notes', methods=['GET'])
 def get_notes():
-    return jsonify({'notes': [n.serialize for n in models.Note.query.all()]})
+    notes = models.Note.query.order_by(models.Note.timestamp.desc()).all()
+    return jsonify({'notes': [n.serialize for n in notes]})
 
 
 @app.route('/api/notes', methods=['POST'])

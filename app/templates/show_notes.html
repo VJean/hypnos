@@ -52,18 +52,18 @@
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3 class="modal-title" id="addmodal">Add note</h3>
                 </div>
                 <div class="modal-body">
-                    <div class="control-group">
-                        <label for="content" class="sr-only">Note:</label>
-                        <input id="content" type="text" data-bind="value: content"/>
+                    <div class="form-group">
+                        <label for="creationContent" class="sr-only">Note:</label>
+                        <input id="creationContent" class="form-control" type="text" data-bind="value: content"/>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bind="click: validAdd" >OK</button>
                     <button class="btn" data-dismiss="modal" >Cancel</button>
+                    <button class="btn btn-primary" data-bind="click: validAdd" >Add note</button>
                 </div>
             </div>
         </div>
@@ -74,15 +74,18 @@
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3 class="modal-title" id="editmodal">Edit note</h3>
                 </div>
                 <div class="modal-body">
-                    <input type="text" data-bind="value: contentInput" />
+                    <div class="form-group">
+                        <label for="editionContent" class="sr-only">Contenu</label>
+                        <input id="editionContent" class="form-control" type="text" data-bind="value: content" />
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bind="click: validEdit" >OK</button>
                     <button class="btn" data-dismiss="modal" >Cancel</button>
+                    <button class="btn btn-primary" data-bind="click: validEdit" >Save changes</button>
                 </div>
             </div>
         </div>
@@ -91,6 +94,14 @@
 
 
     <script type="text/javascript">
+        $('#creation').on('shown.bs.modal', function () {
+          $('#creationContent').focus()
+        })
+
+        $('#edition').on('shown.bs.modal', function () {
+          $('#editionContent').focus()
+        })
+
         function NotesViewModel(){
             var self = this;
             self.notesArray = ko.observableArray();
@@ -126,7 +137,8 @@
                     contentType:"application/json",
                     dataType:"json",
                     success: function(data){
-                        self.notesArray.push({
+                        // unshift : add at beginning of list
+                        self.notesArray.unshift({
                             id: ko.observable(data.note.id),
                             content: ko.observable(data.note.content),
                             timestamp: ko.observable(data.note.timestamp),
@@ -183,11 +195,11 @@
 
         function EditViewModel(){
             var self = this;
-            self.contentInput = ko.observable();
+            self.content = ko.observable();
 
             self.setNote = function(note) {
                 self.note = note;
-                self.contentInput(note.content());
+                self.content(note.content());
             };
 
             self.validEdit = function() {
@@ -196,7 +208,7 @@
                 $.ajax({
                     url: 'http://localhost:5000/api/notes/'+self.note.id(),
                     type:"PUT",
-                    data: JSON.stringify({'content': self.contentInput()}),
+                    data: JSON.stringify({'content': self.content()}),
                     contentType:"application/json",
                     dataType:"json",
                     success: function(data){
