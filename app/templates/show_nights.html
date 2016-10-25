@@ -2,11 +2,72 @@
 <html>
 <head>
     <title>Home | Nights</title>
+    <!-- Bootstrap Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Datetimepicker -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}">
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+              integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+              crossorigin="anonymous"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+
+    <!-- moment.js with locales -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment-with-locales.min.js"></script>
+    <!-- Chart.js -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+    <!-- Datetimepicker -->
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
 </head>
 
 <body>
     <h1>Nights</h1>
     
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#creation">
+        show modal
+    </button>
+
+    <div id="creation" tabindex="-1" class="modal fade" role="dialog" aria-labelledy="addmodal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title" id="addmodal">Add night</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="beginInput">Begin</label>
+                        <input id="beginInput" class="form-control" type="text" data-bind="dateTimePicker: beginInput, dateTimePickerOptions: {locale:'fr',sideBySide:true,defaultDate:moment().seconds(0).milliseconds(0)}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="endInput">End</label>
+                        <input id="endInput" class="form-control" type="text" data-bind="dateTimePicker: endInput, dateTimePickerOptions:{locale:'fr',sideBySide:true,defaultDate:moment().seconds(0).milliseconds(0).add(1,'h')}"/>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input data-bind="checked: wasAlone" type="checkbox" />
+                            Alone
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="placeInput">Place</label>
+                        <select id="placeInput" class="form-control" data-bind="options: places,
+                                                                                optionsCaption: 'Choose a place...',
+                                                                                optionsText: 'name',
+                                                                                value: selectedPlace"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" >Cancel</button>
+                    <button class="btn btn-primary" data-bind="click: validAdd" >Add night</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div style="width:70%">
         <canvas id="chartCanvas"></canvas>
     </div>
@@ -26,11 +87,6 @@
         </tr>
         {% endfor %}
     </table>
-
-    <!-- moment.js with locales -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment-with-locales.min.js"></script>
-    <!-- Chart.js -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
     
     <script type="text/javascript">
         var myLabels = {{ amountchart.x|tojson|safe }}
@@ -60,6 +116,96 @@
                 }
             }
         });
+    </script>
+
+    <script type="text/javascript">
+        ko.bindingHandlers.dateTimePicker = {
+            init: function (element, valueAccessor, allBindingsAccessor) {
+                //initialize datepicker with some optional options
+                var options = allBindingsAccessor().dateTimePickerOptions || {};
+                $(element).datetimepicker(options);
+                //when a user changes the date, update the view model
+                ko.utils.registerEventHandler(element, "dp.change", function (event) {
+                    var value = valueAccessor();
+                    if (ko.isObservable(value)) {
+                        if (event.date != null && !(event.date instanceof Date)) {
+                            value(event.date.toDate());
+                        } else {
+                            value(event.date);
+                        }
+                    }
+                });
+                ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                    var picker = $(element).data("DateTimePicker");
+                    if (picker) {
+                        picker.destroy();
+                    }
+                });
+            },
+            update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+                var picker = $(element).data("DateTimePicker");
+                //when the view model is updated, update the widget
+                if (picker && ko.utils.unwrapObservable(valueAccessor())) {
+                    var koDate = ko.utils.unwrapObservable(valueAccessor());
+
+                    //in case return from server datetime i am get in this form for example /Date(93989393)/ then fomat this
+                    koDate = (typeof (koDate) !== 'object') ? new Date(parseFloat(koDate.replace(/[^0-9]/g, ''))) : koDate;
+
+                    picker.date(koDate);
+                }
+            }
+        };
+
+
+        // enlever le moment() du data-bind
+        // changer les valeurs des champs lorsqu'on affiche les dateTimePicker
+        // avec un bind sur le bouton 'show'
+
+
+        function AddViewModel() {
+            var self = this
+
+            var now = moment()
+            now.seconds(0).milliseconds(0)
+
+            self.beginInput = ko.observable(now.toDate())
+            self.endInput = ko.observable(now.add(1,'h').toDate())
+            self.wasAlone = ko.observable(false)
+            self.selectedPlace = ko.observable()
+            self.places = ko.observableArray()
+
+            $.getJSON('http://localhost:5000/api/places', function(data){
+                data['places'].forEach(function(p,i,array){
+                    self.places.push({
+                        id: ko.observable(p.id),
+                        name: ko.observable(p.name)
+                    })
+                })
+            })
+
+            self.validAdd = function() {
+                console.log('Todo : validAdd')
+                $("#creation").modal('hide')
+                n = {
+                    begin: moment(self.beginInput()).format(),
+                    end: moment(self.endInput().toISOString()).format(),
+                    alone: self.wasAlone(),
+                    place_id: self.selectedPlace().id()
+                }
+                console.log(n)
+            }
+        }
+
+        var addViewModel = new AddViewModel()
+        ko.applyBindings(addViewModel)
+
+        $("#beginInput").on("dp.change", function (e) {
+            $('#endInput').data("DateTimePicker").minDate(e.date);
+        });
+        $("#endInput").on("dp.change", function (e) {
+            $('#beginInput').data("DateTimePicker").maxDate(e.date);
+        });
+
     </script>
 </body>
 </html>
