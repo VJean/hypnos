@@ -4,22 +4,100 @@
     <title>Home | Places</title>
     <!-- leaflet -->
     <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+    <script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+    <!-- Bootstrap : Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+              integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+              crossorigin="anonymous"></script>
+    <!-- Bootstrap : Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
 </head>
 
 <body>
-    <h1>Places</h1>
-    <ul>
-        {% for place in places %}
-        <li>{{ place.name }}</li>
-        {% endfor %}
-    </ul>
+    <div id="main" class="container">
+        <h1>Places</h1>
+        <button type="submit" class="btn btn-primary" data-bind="click: beginAdd" >
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Ajouter
+        </button>
+
+        <ul>
+            {% for place in places %}
+            <li>{{ place.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 
     <div id="map" style="height:300px"></div>
 
-    <!-- leaflet -->
-    <script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+    <div id="creation" tabindex="-1" class="modal fade" role="dialog" aria-labelledy="addmodal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title" id="addmodal">Add place</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="creationContent" class="sr-only">Name:</label>
+                        <input id="creationContent" class="form-control" type="text" data-bind="value: name"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" >Cancel</button>
+                    <button class="btn btn-primary" data-bind="click: validAdd" >Add place</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="/static/js/show_places.js"></script>
+    <script type="text/javascript">
+        $('#creation').on('shown.bs.modal', function () {
+          $('#creationContent').focus()
+        })
+
+
+        function PlacesViewModel(){
+            var self = this;
+        
+            self.beginAdd = function(){
+                $("#creation").modal('show');
+            }
+
+            self.add = function(place){
+                $.ajax({
+                    url: 'http://localhost:5000/api/places',
+                    type:"POST",
+                    data: place,
+                    contentType:"application/json",
+                    dataType:"json",
+                    success: function(data){
+                        // TODO append (unshift) to array
+                        console.log(data)
+                    }
+                })
+            };
+        }
+
+        function AddViewModel(){
+            var self = this;
+            self.name = ko.observable();
+
+            self.validAdd = function() {
+                $("#creation").modal('hide')
+                p = JSON.stringify({'name': self.name()});
+                placesViewModel.add(p);
+            };
+        };
+
+        var placesViewModel = new PlacesViewModel()
+        var addViewModel = new AddViewModel()
+        ko.applyBindings(placesViewModel, $("#main")[0])
+        ko.applyBindings(addViewModel, $("#creation")[0])
+
+    </script>
 
     <script type="text/javascript">
         var mymap = L.map('map').setView([48.8624019,2.4022506], 13);
