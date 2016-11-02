@@ -87,7 +87,11 @@ def update_note(nid):
 
 @app.route('/api/nights', methods=['GET'])
 def get_nights():
+    nlast = request.args.get('nlast')
     nights = models.Night.query.order_by(models.Night.to_rise.desc()).all()
+    if nlast is not None:
+        nlast = int(nlast)
+        nights = nights[-nlast:]
     return jsonify({'nights': [i.serialize for i in nights]})
 
 
