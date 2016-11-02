@@ -6,14 +6,14 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <!-- Datetimepicker -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}">
-
+    <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
               integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
               crossorigin="anonymous"></script>
     <!-- Latest compiled JavaScript -->
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Knockout -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-
     <!-- moment.js with locales -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment-with-locales.min.js"></script>
     <!-- Chart.js -->
@@ -23,11 +23,16 @@
 </head>
 
 <body>
-    <h1>Nights</h1>
-    
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#creation">
-        show modal
-    </button>
+    <div id="main" class="container">
+        <h1>Nights</h1>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#creation">
+            Add night
+        </button>
+
+        <div style="width:70%">
+            <canvas id="chartCanvas"></canvas>
+        </div>
+    </div>
 
     <div id="creation" tabindex="-1" class="modal fade" role="dialog" aria-labelledy="addmodal">
         <div class="modal-dialog modal-sm" role="document">
@@ -70,27 +75,6 @@
             </div>
         </div>
     </div>
-
-
-    <div style="width:70%">
-        <canvas id="chartCanvas"></canvas>
-    </div>
-
-
-    <table border="1px solid black">
-        <tr>
-            <th>De</th><th>À</th><th>Durée</th><th>Seul</th><th>Endroit</th>
-        </tr>
-        {% for item in nights %}
-        <tr>
-            <td>{{ item.to_bed }}</td>
-            <td>{{ item.to_rise }}</td>
-            <td>{{ item.amount }}</td>
-            <td>{{ item.alone }}</td>
-            <td>{{ item.place.name }}</td>
-        </tr>
-        {% endfor %}
-    </table>
     
     <script type="text/javascript">
         var myLabels = {{ amountchart.x|tojson|safe }}
@@ -227,8 +211,6 @@
             $('#beginInput').data("DateTimePicker").maxDate(e.date);
             addViewModel.updateAmount()
         });
-
-
     </script>
 </body>
 </html>
