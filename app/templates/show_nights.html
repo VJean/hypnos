@@ -77,33 +77,69 @@
     </div>
     
     <script type="text/javascript">
-        var myLabels = {{ amountchart.x|tojson|safe }}
-        var myData = {{ amountchart.y|tojson|safe }}
+        $.getJSON('http://localhost:5000/api/nights', function(data){
+                var nights = data['nights']
+                nights.forEach(function(e,i,a){
+                    a[i].to_bed = moment(e.to_bed)
+                    a[i].to_rise = moment(e.to_rise)
+                    a[i].amount = moment.duration(e.amount)
+                })
+                createCharts(nights)
+            })
+
+        function createCharts(nights) {
+            
 
 
-        var ctx = document.getElementById("chartCanvas");
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: myLabels,
-                datasets: [{
-                    label: 'Durée de sommeil',
-                    data: myData
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: 'time'
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
+            createWeeklyMean(nights)
+            //createPlacesPie(nights)
+        }
+
+        function createWeeklyMean(nights) {
+            var myLabels = []
+            var myData = []
+
+            // first night from the set might not be at the beginning of a week
+            var fromIndex = nights.findIndex(function(element){return element.to_rise.weekday() == 0})
+            // same for last night of the set
+            var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.to_rise.weekday() == 6})
+
+            var weeks = nights.slice(fromIndex,toIndex)
+
+            for (var i = 0; i < weeks.length; i=i+7) {
+                sum = 0
+                for (var j = 0; j < 6; j++) {
+                    sum = sum + weeks[i+j].amount.asHours()
                 }
+                myData.push(sum / 7)
+                myLabels.push(weeks[i].to_rise.week())
             }
-        });
+
+            var ctx = $("#chartCanvas");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: myLabels,
+                    datasets: [{
+                        data: myData
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'category'
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                suggestedMin: 3,
+                                suggestedMax: 10,
+                                stepSize: 1
+                            }
+                        }]
+                    }
+                }
+            });
+        }
     </script>
 
     <script type="text/javascript">
@@ -144,11 +180,9 @@
             }
         };
 
-
         // enlever le moment() du data-bind
         // changer les valeurs des champs lorsqu'on affiche les dateTimePicker
         // avec un bind sur le bouton 'show'
-
 
         function AddViewModel() {
             var self = this
@@ -188,7 +222,7 @@
                     contentType:"application/json",
                     dataType:"json",
                     success: function(data){
-                        console.log(data)
+                        
                     }
                 })
             }
