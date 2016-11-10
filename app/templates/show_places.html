@@ -23,11 +23,11 @@
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Ajouter
         </button>
 
-        <ul>
-            {% for place in places %}
-            <li>{{ place.name }}</li>
-            {% endfor %}
-        </ul>
+        <table class="table table-striped">
+            <tbody data-bind="foreach: placesArray">
+                <tr><td data-bind="text: name"></td></tr>
+            </tbody>
+        </table>
     </div>
 
     <div id="map" style="height:300px"></div>
@@ -61,7 +61,17 @@
 
         function PlacesViewModel(){
             var self = this;
+            self.placesArray = ko.observableArray()
         
+            $.getJSON('http://localhost:5000/api/places', function(data){
+                data['places'].forEach(function(p,i,array) {
+                    self.placesArray.push({
+                        id: ko.observable(p.id),
+                        name: ko.observable(p.name)
+                    })
+                })
+            });
+
             self.beginAdd = function(){
                 $("#creation").modal('show');
             }
@@ -74,8 +84,11 @@
                     contentType:"application/json",
                     dataType:"json",
                     success: function(data){
-                        // TODO append (unshift) to array
                         console.log(data)
+                        self.placesArray.push({
+                            id: ko.observable(data['place']['id']),
+                            name: ko.observable(data['place']['name'])
+                        })
                     }
                 })
             };

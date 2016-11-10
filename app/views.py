@@ -31,8 +31,7 @@ def show_nights():
 
 @app.route('/places', methods=['GET'])
 def show_places():
-    places = models.Place.query.all()
-    return render_template('show_places.html', places=places)
+    return render_template('show_places.html')
 
 
 # API routes
