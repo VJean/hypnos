@@ -1,28 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home | Nights</title>
-    <!-- Bootstrap Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- Datetimepicker -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}">
-    <!-- JQuery -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-              integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-              crossorigin="anonymous"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- Knockout -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+{% extends "base.html" %}
+{% block title %}Nights{% endblock %}
+{% block head %}
+    {{ super() }}
     <!-- moment.js with locales -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/moment-with-locales.min.js"></script>
+    <!-- Datetimepicker -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <!-- Knockout -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
     <!-- Chart.js -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
-    <!-- Datetimepicker -->
-    <script type="text/javascript" src="{{ url_for('static', filename='vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
-</head>
-
-<body>
+{% endblock %}
+{% block content %}
     <div id="main" class="container">
         <h1>Nights</h1>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#creation">
@@ -246,5 +236,4 @@
             addViewModel.updateAmount()
         });
     </script>
-</body>
-</html>
+{% endblock %}

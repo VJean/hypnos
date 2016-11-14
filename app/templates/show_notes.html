@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home | Notes</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-              integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-              crossorigin="anonymous"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% extends "base.html" %}
+{% block title %}Notes{% endblock %}
+{% block head %}
+    {{ super() }}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-</head>
-
-<body>
+{% endblock %}
+{% block content %}
     <div id="notesMain" class="container">
         <h1>Notes</h1>
         <button type="submit" class="btn btn-primary" data-bind="click: beginAdd" >
@@ -223,5 +214,4 @@
         ko.applyBindings(editViewModel, $("#edition")[0]);
         
     </script>
-</body>
-</html>
+{% endblock %}
