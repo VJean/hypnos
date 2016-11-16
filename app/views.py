@@ -82,7 +82,7 @@ def update_note(nid):
     return jsonify({'note': n.serialize})
 
 
-# SleepItems
+# Nights
 
 @app.route('/api/nights', methods=['GET'])
 def get_nights():
@@ -99,15 +99,15 @@ def create_night():
     if not request.json or 'to_bed' not in request.json:
         abort(400)
     place = models.Place.query.get(request.json.get('place_id'))
-    item = models.Night(request.json.get('to_bed'), request.json.get('to_rise'), request.json.get('amount'), request.json.get('alone'), place)
-    db.session.add(item)
+    night = models.Night(request.json.get('to_bed'), request.json.get('to_rise'), request.json.get('amount'), request.json.get('alone'), place)
+    db.session.add(night)
     db.session.commit()
-    return jsonify({'item': item.serialize}), 201
+    return jsonify({'night': night.serialize}), 201
 
 
 @app.route('/api/nights/<int:sid>', methods=['GET'])
 def get_night(sid):
-    return jsonify({'item': models.Night.query.filter(models.Night.id == sid).first().serialize})
+    return jsonify({'night': models.Night.query.filter(models.Night.id == sid).first().serialize})
 
 
 @app.route('/api/nights/<int:sid>', methods=['DELETE'])
@@ -139,7 +139,7 @@ def update_night(sid):
     if 'place_id' in request.json:
         s.place = models.Place.query.get(request.json.get('place_id'))
     db.session.commit()
-    return jsonify({'item': s.serialize})
+    return jsonify({'night': s.serialize})
 
 
 # Places
