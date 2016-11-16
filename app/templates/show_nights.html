@@ -19,6 +19,19 @@
             Add night
         </button>
 
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date of night</th><th>Alone</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: nights">
+                <tr>
+                    <td data-bind="text: date"></td><td data-bind="text: alone"></td>
+                </tr>
+            </tbody>
+        </table>
+
         <div style="width:70%">
             <canvas id="chartCanvas"></canvas>
         </div>
@@ -174,6 +187,44 @@
         // changer les valeurs des champs lorsqu'on affiche les dateTimePicker
         // avec un bind sur le bouton 'show'
 
+        function NightsViewModel() {
+            var self = this
+
+            self.nights = ko.observableArray()
+            $.getJSON('http://localhost:5000/api/nights?nlast=10', function(data){
+                data['nights'].forEach(function(n,i,array){
+                    
+                    var rise = moment(n.to_rise)
+
+                    self.nights.push({
+                        id: n.id,
+                        alone: n.alone,
+                        place_id: n.place_id,
+                        to_bed: moment(n.to_bed),
+                        to_rise: rise,
+                        amount: moment.duration(n.amount),
+                        date: rise.startOf('day')
+                    })
+                })
+            })
+
+            self.add = function(n) {
+                var rise = moment(n.to_rise)
+
+                self.nights.shift()
+
+                self.nights.push({
+                        id: n.id,
+                        alone: n.alone,
+                        place_id: n.place_id,
+                        to_bed: moment(n.to_bed),
+                        to_rise: rise,
+                        amount: moment.duration(n.amount),
+                        date: rise.startOf('day')
+                })
+            }
+        }
+
         function AddViewModel() {
             var self = this
 
@@ -212,7 +263,7 @@
                     contentType:"application/json",
                     dataType:"json",
                     success: function(data){
-                        
+                        nightsViewModel.add(data['night'])
                     }
                 })
             }
@@ -223,9 +274,12 @@
             }
         }
 
+        var nightsViewModel = new NightsViewModel()
+        ko.applyBindings(nightsViewModel, $("#main")[0])
+
         var addViewModel = new AddViewModel()
         addViewModel.updateAmount()
-        ko.applyBindings(addViewModel)
+        ko.applyBindings(addViewModel, $("#creation")[0])
 
         $("#beginInput").on("dp.change", function (e) {
             $('#endInput').data("DateTimePicker").minDate(e.date);
