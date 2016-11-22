@@ -4,8 +4,8 @@
     {{ super() }}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
     <!-- leaflet -->
-    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
-    <script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 {% endblock %}
 {% block content %}
     <div id="main" class="container">
@@ -16,19 +16,23 @@
 
         <table class="table table-bordered table-striped table-condensed table-hover">
             <thead>
-                <tr><th>Name</th></tr>
+                <tr><th>Name</th><th>Latitude</th><th>Longitude</th></tr>
             </thead>
             <tbody data-bind="foreach: placesArray">
-                <tr><td><span data-bind="text: name"></span><button class="pull-right" data-bind="click: $parent.delete">&times;</button></td></tr>
+                <tr>
+                    <td><span data-bind="text: name"></span></td>
+                    <td><span data-bind="text: lat"></span></td>
+                    <td><span data-bind="text: lon"></span></td>
+                    <td><button class="btn btn-xs btn-default" data-bind="click: $parent.beginEdit"><i class="fa fa-pencil"></i> Edit</button></td>
+                </tr>
             </tbody>
         </table>
         
         <div id="map" style="height:300px"></div>
     </div>
 
-
     <div id="creation" tabindex="-1" class="modal fade" role="dialog" aria-labelledy="addmodal">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -39,10 +43,55 @@
                         <label for="creationContent" class="sr-only">Name:</label>
                         <input id="creationContent" class="form-control" type="text" data-bind="value: name"/>
                     </div>
+                    <button type="button" class="btn btn-default" data-bind="click: searchCoordinates">Search coordinates</button>
+                    <!-- at most 3 places to choose from -->
+                    <!-- ko foreach : suggestedCoords -->
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="coordRadio" data-bind="checkedValue: $data, checked: $root.checkedCoords">
+                            <span data-bind="text: display_name"></span><br />lat:<span data-bind="text: lat"></span>,lon:<span data-bind="text: lon"></span>
+                        </label>
+                    </div>
+                    <!-- /ko -->
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" >Cancel</button>
-                    <button class="btn btn-primary" data-bind="click: validAdd" >Add place</button>
+                    <button class="btn btn-primary" data-bind="click: validAdd" >Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="edition" tabindex="-1" class="modal fade" role="dialog" aria-labelledy="editmodal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title" id="editmodal">Edit place</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editionContent" class="">Name:</label>
+                        <input id="editionContent" class="form-control" type="text" data-bind="value: name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="latitude" class="">Latitude:</label>
+                        <input id="latitude" class="form-control" type="text" data-bind="value: lat"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="longitude" class="">Longitude:</label>
+                        <input id="longitude" class="form-control" type="text" data-bind="value: lon"/>
+                    </div>
+                    <button type="button" class="btn btn-default" data-bind="click: searchCoordinates">Suggest coordinates</button>
+                    <!-- at most 3 places to choose from -->
+                    <!-- ko foreach : suggestedCoords -->
+                    <p><span data-bind="text: display_name"></span><br />lat:<span data-bind="text: lat"></span>,lon:<span data-bind="text: lon"></span></p>
+                    <!-- /ko -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger pull-left" data-bind="click: deletePlace">Delete</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: validEdit" >Save modifications</button>
                 </div>
             </div>
         </div>
@@ -53,6 +102,12 @@
           $('#creationContent').focus()
         })
 
+        var mymap = L.map('map').setView([48.8624019,2.4022506], 13);
+
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'})
+         .addTo(mymap);
+
+        var markers = []
 
         function PlacesViewModel(){
             var self = this;
@@ -62,9 +117,20 @@
                 data['places'].forEach(function(p,i,array) {
                     self.placesArray.push({
                         id: ko.observable(p.id),
-                        name: ko.observable(p.name)
+                        name: ko.observable(p.name),
+                        lon: ko.observable(p.lon),
+                        lat: ko.observable(p.lat)
                     })
+
+                    
+                    var m = L.marker([p.lat, p.lon])
+                    m.addTo(mymap)
+                    markers.push(m)
                 })
+
+                var markersgroup = L.featureGroup(markers)
+                mymap.fitBounds(markersgroup.getBounds().pad(0.3))
+
             });
 
             self.beginAdd = function(){
@@ -80,13 +146,29 @@
                     dataType:"json",
                     success: function(data){
                         console.log(data)
+                        var newplace = data['place']
                         self.placesArray.push({
-                            id: ko.observable(data['place']['id']),
-                            name: ko.observable(data['place']['name'])
+                            id: ko.observable(newplace['id']),
+                            name: ko.observable(newplace['name']),
+                            lon: ko.observable(newplace['lon']),
+                            lat: ko.observable(newplace['lat'])
                         })
                     }
                 })
             };
+
+            self.beginEdit = function(place){
+                editViewModel.setPlace(place);
+                $("#edition").modal('show');
+            }
+
+            self.update = function(old_p, new_p) {
+                var i = self.placesArray.indexOf(old_p)
+                self.placesArray()[i].id(new_p.id)
+                self.placesArray()[i].name(new_p.name)
+                self.placesArray()[i].lat(new_p.lat)
+                self.placesArray()[i].lon(new_p.lon)
+            }
 
             self.delete = function(place){
                 $.ajax({
@@ -99,30 +181,75 @@
                     }
                 })
             }
-        }
+        };
 
         function AddViewModel(){
             var self = this;
             self.name = ko.observable();
+            self.suggestedCoords = ko.observableArray();
+            self.checkedCoords;
 
             self.validAdd = function() {
-                $("#creation").modal('hide')
-                p = JSON.stringify({'name': self.name()});
+                $("#creation").modal('hide');
+                p = JSON.stringify({'name': self.name(),'lat':self.checkedCoords.lat,'lon':self.checkedCoords.lon});
                 placesViewModel.add(p);
             };
+
+            self.searchCoordinates = function() {
+                $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=3&q=' + self.name(), function(data){
+                    // data : array of places returned by nominatim
+                    self.suggestedCoords(data);
+                })
+            };
+        };
+
+        function EditViewModel(){
+            var self = this;
+            self.name = ko.observable();
+            self.lon = ko.observable();
+            self.lat = ko.observable();
+            self.suggestedCoords = ko.observableArray();
+
+            self.setPlace = function(place) {
+                self.place = place
+                self.name(place.name())
+                self.lon(place.lon())
+                self.lat(place.lat())
+            }
+
+            self.validEdit = function() {
+                $("#edition").modal('hide');
+
+                $.ajax({
+                    url: 'http://localhost:5000/api/places/'+self.place.id(),
+                    type:"PUT",
+                    data: JSON.stringify({'name': self.name(), 'lon':self.lon(), 'lat':self.lat()}),
+                    contentType:"application/json",
+                    dataType:"json",
+                    success: function(data){
+                        placesViewModel.update(self.place,data.place);
+                    }
+                });
+            };
+
+            self.searchCoordinates = function() {
+                $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=3&q=' + self.name(), function(data){
+                    // data : array of places returned by nominatim
+                    self.suggestedCoords(data);
+                })
+            };
+
+            self.deletePlace = function(place) {
+                
+            }
         };
 
         var placesViewModel = new PlacesViewModel()
         var addViewModel = new AddViewModel()
+        var editViewModel = new EditViewModel()
         ko.applyBindings(placesViewModel, $("#main")[0])
         ko.applyBindings(addViewModel, $("#creation")[0])
+        ko.applyBindings(editViewModel, $("#edition")[0])
 
-    </script>
-
-    <script type="text/javascript">
-        var mymap = L.map('map').setView([48.8624019,2.4022506], 13);
-
-        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'})
-         .addTo(mymap);
     </script>
 {% endblock %}
