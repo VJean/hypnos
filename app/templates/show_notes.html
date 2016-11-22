@@ -107,7 +107,7 @@
             });
 
             self.update = function(note,newnote){
-                i = self.notesArray.indexOf(note)
+                var i = self.notesArray.indexOf(note)
                 self.notesArray()[i].id(newnote.id)
                 self.notesArray()[i].timestamp(newnote.timestamp)
                 self.notesArray()[i].content(newnote.content)
