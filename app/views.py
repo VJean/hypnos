@@ -153,7 +153,7 @@ def get_places():
 def create_place():
     if not request.json or 'name' not in request.json:
         abort(400)
-    place = models.Place(request.json.get('name'))
+    place = models.Place(request.json.get('name'), request.json.get('lat'), request.json.get('lon'))
     db.session.add(place)
     db.session.commit()
     return jsonify({'place': place.serialize}), 201
@@ -183,5 +183,7 @@ def update_place(pid):
     if not request.json:
         abort(400)
     p.name = request.json.get('name', p.name)
+    p.longitude = request.json.get('lon', p.longitude)
+    p.latitude = request.json.get('lat', p.latitude)
     db.session.commit()
     return jsonify({'place': p.serialize})
