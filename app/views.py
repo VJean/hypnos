@@ -14,7 +14,7 @@ def homepage():
 @app.route('/notes', methods=['GET'])
 def show_notes():
     notes = models.Note.query.all()
-    return render_template('show_notes.html', notes=notes)
+    return render_template('notes.html', notes=notes)
 
 
 @app.route('/nights', methods=['GET'])
@@ -26,12 +26,12 @@ def show_nights():
         dates.append(i.to_rise.date().isoformat())
         durations.append(i.amount.total_seconds() / 3600)
     a = {'x': dates, 'y': durations}
-    return render_template('show_nights.html', nights=nights, amountchart=a)
+    return render_template('nights.html', nights=nights, amountchart=a)
 
 
 @app.route('/places', methods=['GET'])
 def show_places():
-    return render_template('show_places.html')
+    return render_template('places.html')
 
 
 # API routes
