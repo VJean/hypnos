@@ -2,7 +2,7 @@ $.getJSON('http://localhost:5000/api/nights', function(data){
     var nights = data['nights']
     nights.forEach(function(e,i,a){
         a[i].begin = moment(e.begin)
-        a[i].to_rise = moment(e.to_rise)
+        a[i].end = moment(e.end)
         a[i].amount = moment.duration(e.amount)
     })
     createCharts(nights)
@@ -19,9 +19,9 @@ function createWeeklyMean(nights) {
     var myData = []
 
     // first night from the set might not be at the beginning of a week
-    var fromIndex = nights.findIndex(function(element){return element.to_rise.weekday() == 0})
+    var fromIndex = nights.findIndex(function(element){return element.end.weekday() == 0})
     // same for last night of the set
-    var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.to_rise.weekday() == 6})
+    var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.end.weekday() == 6})
 
     var weeks = nights.slice(fromIndex,toIndex)
 
@@ -31,7 +31,7 @@ function createWeeklyMean(nights) {
             sum = sum + weeks[i+j].amount.asHours()
         }
         myData.push(sum / 7)
-        myLabels.push(weeks[i].to_rise.week())
+        myLabels.push(weeks[i].end.week())
     }
 
     var ctx = $("#chartCanvas");
@@ -108,14 +108,14 @@ function NightsViewModel() {
     $.getJSON('http://localhost:5000/api/nights?nlast=10', function(data){
         data['nights'].forEach(function(n,i,array){
 
-            var rise = moment(n.to_rise)
+            var rise = moment(n.end)
 
             self.nights.push({
                 id: n.id,
                 alone: n.alone,
                 place_id: n.place_id,
                 begin: moment(n.begin),
-                to_rise: rise,
+                end: rise,
                 amount: moment.duration(n.amount),
                 date: rise.startOf('day')
             })
@@ -123,7 +123,7 @@ function NightsViewModel() {
     })
 
     self.add = function(n) {
-        var rise = moment(n.to_rise)
+        var rise = moment(n.end)
 
         self.nights.shift()
 
@@ -132,7 +132,7 @@ function NightsViewModel() {
             alone: n.alone,
             place_id: n.place_id,
             begin: moment(n.begin),
-            to_rise: rise,
+            end: rise,
             amount: moment.duration(n.amount),
             date: rise.startOf('day')
         })
@@ -165,7 +165,7 @@ function AddViewModel() {
         $("#creation").modal('hide')
         var night = {
             begin: moment(self.beginInput()).format(),
-            to_rise: moment(self.endInput()).format(),
+            end: moment(self.endInput()).format(),
             amount: self.amount(),
             alone: self.wasAlone(),
             place_id: self.selectedPlace().id()

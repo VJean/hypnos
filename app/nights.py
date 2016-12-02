@@ -9,24 +9,24 @@ class Night(db.Model):
     __tablename__ = 'nights'
     id = db.Column(db.Integer, primary_key=True)
     begin = db.Column(db.DateTime, unique=True)
-    to_rise = db.Column(db.DateTime, unique=True)
+    end = db.Column(db.DateTime, unique=True)
     amount = db.Column(db.Interval)
     alone = db.Column(db.Boolean)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
     place = db.relationship("Place")
 
-    def __init__(self, begin, to_rise, amount, alone, place):
+    def __init__(self, begin, end, amount, alone, place):
         self.begin = isodate.parse_datetime(begin)
-        self.to_rise = isodate.parse_datetime(to_rise)
+        self.end = isodate.parse_datetime(end)
         if amount == "":
-            self.amount = self.to_rise - self.begin
+            self.amount = self.end - self.begin
         else:
             self.amount = isodate.parse_duration(amount)
         self.alone = alone
         self.place = place
 
     def __repr__(self):
-        return '<Night from %r to %r>' % (self.begin, self.to_rise)
+        return '<Night from %r to %r>' % (self.begin, self.end)
 
     @property
     def serialize(self):
@@ -34,7 +34,7 @@ class Night(db.Model):
         return {
            'id': self.id,
            'begin': dump_datetime(self.begin),
-           'to_rise': dump_datetime(self.to_rise),
+           'end': dump_datetime(self.end),
            'amount': dump_datetime(self.amount),
            'alone': self.alone,
            'place_id': self.place_id
@@ -51,7 +51,7 @@ def show_nights():
 @app.route('/api/nights', methods=['GET'])
 def get_nights():
     nlast = request.args.get('nlast')
-    nights = Night.query.order_by(Night.to_rise).all()
+    nights = Night.query.order_by(Night.end).all()
     if nlast is not None:
         nlast = int(nlast)
         nights = nights[-nlast:]
@@ -63,7 +63,7 @@ def create_night():
     if not request.json or 'begin' not in request.json:
         abort(400)
     place = Place.query.get(request.json.get('place_id'))
-    night = Night(request.json.get('begin'), request.json.get('to_rise'), request.json.get('amount'), request.json.get('alone'), place)
+    night = Night(request.json.get('begin'), request.json.get('end'), request.json.get('amount'), request.json.get('alone'), place)
     db.session.add(night)
     db.session.commit()
     return jsonify({'night': night.serialize}), 201
@@ -95,8 +95,8 @@ def update_night(sid):
 
     if 'begin' in request.json:
         s.begin = isodate.parse_datetime(request.json.get('begin'))
-    if 'to_rise' in request.json:
-        s.to_rise = isodate.parse_datetime(request.json.get('to_rise'))
+    if 'end' in request.json:
+        s.end = isodate.parse_datetime(request.json.get('end'))
     if 'amount' in request.json and request.json.get('amount'):
         s.amount = isodate.parse_duration(request.json.get('amount'))
     s.alone = request.json.get('alone', s.alone)
