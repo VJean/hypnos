@@ -1,7 +1,7 @@
 $.getJSON('http://localhost:5000/api/nights', function(data){
     var nights = data['nights']
     nights.forEach(function(e,i,a){
-        a[i].to_bed = moment(e.to_bed)
+        a[i].begin = moment(e.begin)
         a[i].to_rise = moment(e.to_rise)
         a[i].amount = moment.duration(e.amount)
     })
@@ -114,7 +114,7 @@ function NightsViewModel() {
                 id: n.id,
                 alone: n.alone,
                 place_id: n.place_id,
-                to_bed: moment(n.to_bed),
+                begin: moment(n.begin),
                 to_rise: rise,
                 amount: moment.duration(n.amount),
                 date: rise.startOf('day')
@@ -131,7 +131,7 @@ function NightsViewModel() {
             id: n.id,
             alone: n.alone,
             place_id: n.place_id,
-            to_bed: moment(n.to_bed),
+            begin: moment(n.begin),
             to_rise: rise,
             amount: moment.duration(n.amount),
             date: rise.startOf('day')
@@ -164,7 +164,7 @@ function AddViewModel() {
     self.validAdd = function() {
         $("#creation").modal('hide')
         var night = {
-            to_bed: moment(self.beginInput()).format(),
+            begin: moment(self.beginInput()).format(),
             to_rise: moment(self.endInput()).format(),
             amount: self.amount(),
             alone: self.wasAlone(),
