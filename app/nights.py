@@ -1,4 +1,5 @@
-from app import app, db, places
+from app import app, db
+from app.places import Place
 from flask import render_template, jsonify, request, abort
 import isodate
 from app.util import dump_datetime
@@ -42,14 +43,7 @@ class Night(db.Model):
 
 @app.route('/nights', methods=['GET'])
 def show_nights():
-    nights = Night.query.all()
-    dates = []
-    durations = []
-    for i in nights:
-        dates.append(i.to_rise.date().isoformat())
-        durations.append(i.amount.total_seconds() / 3600)
-    a = {'x': dates, 'y': durations}
-    return render_template('nights.html', nights=nights, amountchart=a)
+    return render_template('nights.html')
 
 
 # API routes
