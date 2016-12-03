@@ -8,33 +8,51 @@ from app.util import dump_datetime
 class Night(db.Model):
     __tablename__ = 'nights'
     id = db.Column(db.Integer, primary_key=True)
-    begin = db.Column(db.DateTime, unique=True)
-    end = db.Column(db.DateTime, unique=True)
+    day = db.Column(db.Date, unique=True)
+    sleepless = db.Column(db.Boolean)
+    to_bed = db.Column(db.DateTime, unique=True)
+    to_rise = db.Column(db.DateTime, unique=True)
     amount = db.Column(db.Interval)
     alone = db.Column(db.Boolean)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
     place = db.relationship("Place")
 
-    def __init__(self, begin, end, amount, alone, place):
-        self.begin = isodate.parse_datetime(begin)
-        self.end = isodate.parse_datetime(end)
-        if amount == "":
-            self.amount = self.end - self.begin
-        else:
-            self.amount = isodate.parse_duration(amount)
+    def __init__(self, day, sleepless, begin, end, amount, alone, place):
+        self.day = isodate.parse_date(day)
         self.alone = alone
         self.place = place
+        self.sleepless = sleepless
+        if self.sleepless:
+            self.to_bed = None
+            self.to_rise = None
+            self.amount = isodate.parse_duration("PT0H0M")
+        else:
+            self.to_bed = isodate.parse_datetime(begin)
+            self.to_rise = isodate.parse_datetime(end)
+            if amount == "":
+                self.amount = self.to_rise - self.to_bed
+            else:
+                self.amount = isodate.parse_duration(amount)
 
     def __repr__(self):
-        return '<Night from %r to %r>' % (self.begin, self.end)
+        return '<Night from %r to %r>' % (self.to_bed, self.to_rise)
 
     @property
     def serialize(self):
         """Return object data in easily serializeable format"""
+        dump_to_bed = ""
+        dump_to_rise = ""
+        if self.to_bed:
+            dump_to_bed = dump_datetime(self.to_bed)
+        if self.to_rise:
+            dump_to_rise = dump_datetime(self.to_rise)
+
         return {
            'id': self.id,
-           'begin': dump_datetime(self.begin),
-           'end': dump_datetime(self.end),
+           'sleepless': self.sleepless,
+           'date': dump_datetime(self.day),
+           'begin': dump_to_bed,
+           'end': dump_to_rise,
            'amount': dump_datetime(self.amount),
            'alone': self.alone,
            'place_id': self.place_id
@@ -51,7 +69,7 @@ def show_nights():
 @app.route('/api/nights', methods=['GET'])
 def get_nights():
     nlast = request.args.get('nlast')
-    nights = Night.query.order_by(Night.end).all()
+    nights = Night.query.order_by(Night.day).all()
     if nlast is not None:
         nlast = int(nlast)
         nights = nights[-nlast:]
@@ -63,7 +81,7 @@ def create_night():
     if not request.json or 'begin' not in request.json:
         abort(400)
     place = Place.query.get(request.json.get('place_id'))
-    night = Night(request.json.get('begin'), request.json.get('end'), request.json.get('amount'), request.json.get('alone'), place)
+    night = Night(request.json.get('day'), request.json.get('sleepless'), request.json.get('begin'), request.json.get('end'), request.json.get('amount'), request.json.get('alone'), place)
     db.session.add(night)
     db.session.commit()
     return jsonify({'night': night.serialize}), 201
@@ -93,13 +111,19 @@ def update_night(sid):
     if not request.json:
         abort(400)
 
+    if 'day' in request.json:
+        s.day = isodate.parse_date(request.json.get('day'))
     if 'begin' in request.json:
-        s.begin = isodate.parse_datetime(request.json.get('begin'))
+        s.to_bed = isodate.parse_datetime(request.json.get('begin'))
     if 'end' in request.json:
-        s.end = isodate.parse_datetime(request.json.get('end'))
+        s.to_rise = isodate.parse_datetime(request.json.get('end'))
     if 'amount' in request.json and request.json.get('amount'):
         s.amount = isodate.parse_duration(request.json.get('amount'))
     s.alone = request.json.get('alone', s.alone)
+    s.sleepless = request.json.get('sleepless', s.sleepless)
+    if s.sleepless:
+        s.to_bed = None
+        s.to_rise = None
     if 'place_id' in request.json:
         s.place = Place.query.get(request.json.get('place_id'))
     db.session.commit()
