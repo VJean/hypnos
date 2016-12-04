@@ -81,7 +81,7 @@ def create_night():
     if not request.json or 'begin' not in request.json:
         abort(400)
     place = Place.query.get(request.json.get('place_id'))
-    night = Night(request.json.get('day'), request.json.get('sleepless'), request.json.get('begin'), request.json.get('end'), request.json.get('amount'), request.json.get('alone'), place)
+    night = Night(request.json.get('date'), request.json.get('sleepless'), request.json.get('begin'), request.json.get('end'), request.json.get('amount'), request.json.get('alone'), place)
     db.session.add(night)
     db.session.commit()
     return jsonify({'night': night.serialize}), 201
@@ -111,8 +111,8 @@ def update_night(sid):
     if not request.json:
         abort(400)
 
-    if 'day' in request.json:
-        s.day = isodate.parse_date(request.json.get('day'))
+    if 'date' in request.json:
+        s.day = isodate.parse_date(request.json.get('date'))
     if 'begin' in request.json:
         s.to_bed = isodate.parse_datetime(request.json.get('begin'))
     if 'end' in request.json:
