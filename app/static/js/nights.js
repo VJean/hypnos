@@ -144,6 +144,7 @@ function AddViewModel() {
     self.endInput = ko.observable(now.add(1,'h').toDate())
     self.amount = ko.observable()
     self.wasAlone = ko.observable(false)
+    self.sleepless = ko.observable(false)
     self.selectedPlace = ko.observable()
     self.places = ko.observableArray()
 
@@ -161,10 +162,14 @@ function AddViewModel() {
         var night = {
             begin: moment(self.beginInput()).format(),
             end: moment(self.endInput()).format(),
+            date: moment(self.endInput()).startOf('day').format(),
             amount: self.amount(),
+            sleepless: self.sleepless(),
             alone: self.wasAlone(),
             place_id: self.selectedPlace().id()
         }
+        console.log('sent',night)
+        
         $.ajax({
             url: 'http://localhost:5000/api/nights',
             type:"POST",
@@ -173,6 +178,7 @@ function AddViewModel() {
             dataType:"json",
             success: function(data){
                 nightsViewModel.add(data['night'])
+                console.log('reveived', data['night'])
             }
         })
     }
