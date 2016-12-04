@@ -107,24 +107,19 @@ function NightsViewModel() {
     self.nights = ko.observableArray()
     $.getJSON('http://localhost:5000/api/nights?nlast=10', function(data){
         data['nights'].forEach(function(n,i,array){
-
-            var rise = moment(n.end)
-
             self.nights.push({
                 id: n.id,
                 alone: n.alone,
                 place_id: n.place_id,
                 begin: moment(n.begin),
-                end: rise,
+                end: moment(n.end),
                 amount: moment.duration(n.amount),
-                date: rise.startOf('day')
+                date: moment(n.date)
             })
         })
     })
 
     self.add = function(n) {
-        var rise = moment(n.end)
-
         self.nights.shift()
 
         self.nights.push({
@@ -132,9 +127,9 @@ function NightsViewModel() {
             alone: n.alone,
             place_id: n.place_id,
             begin: moment(n.begin),
-            end: rise,
+            end: moment(n.end),
             amount: moment.duration(n.amount),
-            date: rise.startOf('day')
+            date: moment(n.date)
         })
     }
 }
