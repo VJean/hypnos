@@ -1,8 +1,7 @@
 $.getJSON('http://localhost:5000/api/nights', function(data){
     var nights = data['nights']
     nights.forEach(function(e,i,a){
-        a[i].begin = moment(e.begin)
-        a[i].end = moment(e.end)
+        a[i].date = moment(e.date)
         a[i].amount = moment.duration(e.amount)
     })
     createCharts(nights)
@@ -19,9 +18,9 @@ function createWeeklyMean(nights) {
     var myData = []
 
     // first night from the set might not be at the beginning of a week
-    var fromIndex = nights.findIndex(function(element){return element.end.weekday() == 0})
+    var fromIndex = nights.findIndex(function(element){return element.date.weekday() == 0})
     // same for last night of the set
-    var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.end.weekday() == 6})
+    var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.date.weekday() == 6})
 
     var weeks = nights.slice(fromIndex,toIndex)
 
@@ -31,7 +30,7 @@ function createWeeklyMean(nights) {
             sum = sum + weeks[i+j].amount.asHours()
         }
         myData.push(sum / 7)
-        myLabels.push(weeks[i].end.week())
+        myLabels.push(weeks[i].date.week())
     }
 
     var ctx = $("#chartCanvas");
@@ -168,7 +167,6 @@ function AddViewModel() {
             alone: self.wasAlone(),
             place_id: self.selectedPlace().id()
         }
-        console.log('sent',night)
         
         $.ajax({
             url: 'http://localhost:5000/api/nights',
@@ -178,7 +176,6 @@ function AddViewModel() {
             dataType:"json",
             success: function(data){
                 nightsViewModel.add(data['night'])
-                console.log('reveived', data['night'])
             }
         })
     }
