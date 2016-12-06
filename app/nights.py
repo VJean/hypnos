@@ -1,6 +1,7 @@
 from app import app, db
 from app.places import Place
 from flask import render_template, jsonify, request, abort
+from sqlalchemy import func
 import isodate
 from app.util import dump_datetime
 
@@ -35,7 +36,7 @@ class Night(db.Model):
                 self.amount = isodate.parse_duration(amount)
 
     def __repr__(self):
-        return '<Night from %r to %r>' % (self.to_bed, self.to_rise)
+        return '<Night ending on the %s>' % (self.day)
 
     @property
     def serialize(self):
@@ -74,6 +75,14 @@ def get_nights():
         nlast = int(nlast)
         nights = nights[-nlast:]
     return jsonify({'nights': [i.serialize for i in nights]})
+
+
+@app.route('/api/nights/stats', methods=['GET'])
+def get_stats():
+    stats = []
+    if request.args.get('q') == "places_repartition":
+        stats = db.session.query(Night.place_id, func.count(Night.place_id)).group_by(Night.place_id).order_by(func.count(Night.place_id)).all()
+    return jsonify({'stats': stats})
 
 
 @app.route('/api/nights', methods=['POST'])
