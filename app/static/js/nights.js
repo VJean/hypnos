@@ -10,7 +10,7 @@ $.getJSON('http://localhost:5000/api/nights', function(data){
 function createCharts(nights) {
 
     createWeeklyMean(nights)
-    //createPlacesPie(nights)
+    createPlacesPie()
 }
 
 function createWeeklyMean(nights) {
@@ -56,6 +56,25 @@ function createWeeklyMean(nights) {
                 }]
             }
         }
+    });
+}
+
+function createPlacesPie(){
+    $.getJSON('http://localhost:5000/api/nights/stats?q=places_repartition', function(data){
+        var labels = data['stats']['places_repartition']['labels']
+        var data = data['stats']['places_repartition']['values']
+
+        var ctx = $("#placesCanvas")
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data
+                }]
+            },
+            options: {'legend':{'display':false}}
+        })
     });
 }
 

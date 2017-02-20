@@ -82,7 +82,13 @@ def get_stats():
     stats = []
     if request.args.get('q') == "places_repartition":
         stats = db.session.query(Night.place_id, func.count(Night.place_id)).group_by(Night.place_id).order_by(func.count(Night.place_id)).all()
-    return jsonify({'stats': stats})
+        labels = []
+        values = []
+        for id, count in stats:
+            labels.append(Place.query.get(id).name)
+            values.append(count)
+        return jsonify({'stats': {'places_repartition': {'labels': labels, 'values': values}}})
+    return jsonify({'error': 'unknown stat queried'})
 
 
 @app.route('/api/nights', methods=['POST'])
