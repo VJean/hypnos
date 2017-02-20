@@ -1,8 +1,7 @@
 $.getJSON('http://localhost:5000/api/nights', function(data){
     var nights = data['nights']
     nights.forEach(function(e,i,a){
-        a[i].to_bed = moment(e.to_bed)
-        a[i].to_rise = moment(e.to_rise)
+        a[i].date = moment(e.date)
         a[i].amount = moment.duration(e.amount)
     })
     createCharts(nights)
@@ -11,7 +10,7 @@ $.getJSON('http://localhost:5000/api/nights', function(data){
 function createCharts(nights) {
 
     createWeeklyMean(nights)
-    //createPlacesPie(nights)
+    createPlacesPie()
 }
 
 function createWeeklyMean(nights) {
@@ -19,9 +18,9 @@ function createWeeklyMean(nights) {
     var myData = []
 
     // first night from the set might not be at the beginning of a week
-    var fromIndex = nights.findIndex(function(element){return element.to_rise.weekday() == 0})
+    var fromIndex = nights.findIndex(function(element){return element.date.weekday() == 0})
     // same for last night of the set
-    var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.to_rise.weekday() == 6})
+    var toIndex = nights.length - nights.slice().reverse().findIndex(function(element){return element.date.weekday() == 6})
 
     var weeks = nights.slice(fromIndex,toIndex)
 
@@ -31,7 +30,7 @@ function createWeeklyMean(nights) {
             sum = sum + weeks[i+j].amount.asHours()
         }
         myData.push(sum / 7)
-        myLabels.push(weeks[i].to_rise.week())
+        myLabels.push(weeks[i].date.week())
     }
 
     var ctx = $("#chartCanvas");
@@ -57,6 +56,25 @@ function createWeeklyMean(nights) {
                 }]
             }
         }
+    });
+}
+
+function createPlacesPie(){
+    $.getJSON('http://localhost:5000/api/nights/stats?q=places_repartition', function(data){
+        var labels = data['stats']['places_repartition']['labels']
+        var data = data['stats']['places_repartition']['values']
+
+        var ctx = $("#placesCanvas")
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data
+                }]
+            },
+            options: {'legend':{'display':false}}
+        })
     });
 }
 
@@ -107,34 +125,29 @@ function NightsViewModel() {
     self.nights = ko.observableArray()
     $.getJSON('http://localhost:5000/api/nights?nlast=10', function(data){
         data['nights'].forEach(function(n,i,array){
-
-            var rise = moment(n.to_rise)
-
             self.nights.push({
                 id: n.id,
                 alone: n.alone,
                 place_id: n.place_id,
-                to_bed: moment(n.to_bed),
-                to_rise: rise,
+                begin: moment(n.begin),
+                end: moment(n.end),
                 amount: moment.duration(n.amount),
-                date: rise.startOf('day')
+                date: moment(n.date)
             })
         })
     })
 
     self.add = function(n) {
-        var rise = moment(n.to_rise)
-
         self.nights.shift()
 
         self.nights.push({
             id: n.id,
             alone: n.alone,
             place_id: n.place_id,
-            to_bed: moment(n.to_bed),
-            to_rise: rise,
+            begin: moment(n.begin),
+            end: moment(n.end),
             amount: moment.duration(n.amount),
-            date: rise.startOf('day')
+            date: moment(n.date)
         })
     }
 }
@@ -149,6 +162,7 @@ function AddViewModel() {
     self.endInput = ko.observable(now.add(1,'h').toDate())
     self.amount = ko.observable()
     self.wasAlone = ko.observable(false)
+    self.sleepless = ko.observable(false)
     self.selectedPlace = ko.observable()
     self.places = ko.observableArray()
 
@@ -164,12 +178,15 @@ function AddViewModel() {
     self.validAdd = function() {
         $("#creation").modal('hide')
         var night = {
-            to_bed: moment(self.beginInput()).format(),
-            to_rise: moment(self.endInput()).format(),
+            begin: moment(self.beginInput()).format(),
+            end: moment(self.endInput()).format(),
+            date: moment(self.endInput()).startOf('day').format(),
             amount: self.amount(),
+            sleepless: self.sleepless(),
             alone: self.wasAlone(),
             place_id: self.selectedPlace().id()
         }
+        
         $.ajax({
             url: 'http://localhost:5000/api/nights',
             type:"POST",
