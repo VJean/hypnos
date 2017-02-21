@@ -10,4 +10,4 @@ db = SQLAlchemy(app)
 
 # avoid circular references by calling this import at the end
 # (views might reference app)
-from app import views, notes, places, nights
+from app import views, places, nights
