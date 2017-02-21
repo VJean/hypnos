@@ -22,12 +22,20 @@
                 <table class="table table-bordered table-striped table-condensed table-hover">
                     <thead>
                         <tr>
-                            <th>Date of night</th><th>Alone</th>
+                            <th>Date of night</th>
+                            <th>Begin</th>
+                            <th>End</th>
+                            <th>Amount</th>
+                            <th>Alone</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: nights">
                         <tr>
-                            <td data-bind="text: date"></td><td data-bind="text: alone"></td>
+                            <td data-bind="text: date.format('DD/MM/YYYY')"></td>
+                            <td data-bind="text: begin.format('DD/MM/YY HH:mm')"></td>
+                            <td data-bind="text: end.format('DD/MM/YY HH:mm')"></td>
+                            <td data-bind="text: amount.humanize()"></td>
+                            <td data-bind="text: alone"></td>
                         </tr>
                     </tbody>
                 </table>
