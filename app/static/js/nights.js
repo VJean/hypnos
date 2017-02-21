@@ -78,47 +78,6 @@ function createPlacesPie(){
     });
 }
 
-ko.bindingHandlers.dateTimePicker = {
-    init: function (element, valueAccessor, allBindingsAccessor) {
-        //initialize datepicker with some optional options
-        var options = allBindingsAccessor().dateTimePickerOptions || {};
-        $(element).datetimepicker(options);
-        //when a user changes the date, update the view model
-        ko.utils.registerEventHandler(element, "dp.change", function (event) {
-            var value = valueAccessor();
-            if (ko.isObservable(value)) {
-                if (event.date != null && !(event.date instanceof Date)) {
-                    value(event.date.toDate());
-                } else {
-                    value(event.date);
-                }
-            }
-        });
-        ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-            var picker = $(element).data("DateTimePicker");
-            if (picker) {
-                picker.destroy();
-            }
-        });
-    },
-    update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var picker = $(element).data("DateTimePicker");
-        //when the view model is updated, update the widget
-        if (picker && ko.utils.unwrapObservable(valueAccessor())) {
-            var koDate = ko.utils.unwrapObservable(valueAccessor());
-
-            //in case return from server datetime i am get in this form for example /Date(93989393)/ then fomat this
-            koDate = (typeof (koDate) !== 'object') ? new Date(parseFloat(koDate.replace(/[^0-9]/g, ''))) : koDate;
-
-            picker.date(koDate);
-        }
-    }
-};
-
-// enlever le moment() du data-bind
-// changer les valeurs des champs lorsqu'on affiche les dateTimePicker
-// avec un bind sur le bouton 'show'
-
 function NightsViewModel() {
     var self = this
 
@@ -155,16 +114,24 @@ function NightsViewModel() {
 function AddViewModel() {
     var self = this
 
-    var now = moment()
-    now.seconds(0).milliseconds(0)
-
-    self.beginInput = ko.observable(now.toDate())
-    self.endInput = ko.observable(now.add(1,'h').toDate())
+    self.beginInput = ko.observable()
+    self.endInput = ko.observable()
     self.amount = ko.observable()
     self.wasAlone = ko.observable(false)
     self.sleepless = ko.observable(false)
     self.selectedPlace = ko.observable()
     self.places = ko.observableArray()
+
+    self.beginInput.subscribe(function (newValue) {
+        if (moment(newValue).isValid()) {
+            addViewModel.updateAmount();
+        }
+    });
+    self.endInput.subscribe(function (newValue) {
+        if (moment(newValue).isValid()) {
+            addViewModel.updateAmount();
+        }
+    });
 
     $.getJSON('http://localhost:5000/api/places', function(data){
         data['places'].forEach(function(p,i,array){
@@ -186,7 +153,7 @@ function AddViewModel() {
             alone: self.wasAlone(),
             place_id: self.selectedPlace().id()
         }
-        
+
         $.ajax({
             url: 'http://localhost:5000/api/nights',
             type:"POST",
@@ -200,7 +167,8 @@ function AddViewModel() {
     }
 
     self.updateAmount = function() {
-        var newDuration = moment.duration(self.endInput() - self.beginInput())
+        var newDuration = moment.duration(moment(self.endInput()) - moment(self.beginInput()))
+        console.log("new duration amount:",newDuration.toJSON());
         self.amount(newDuration.toJSON())
     }
 }
@@ -211,12 +179,3 @@ ko.applyBindings(nightsViewModel, $("#main")[0])
 var addViewModel = new AddViewModel()
 addViewModel.updateAmount()
 ko.applyBindings(addViewModel, $("#creation")[0])
-
-$("#beginInput").on("dp.change", function (e) {
-    $('#endInput').data("DateTimePicker").minDate(e.date);
-    addViewModel.updateAmount()
-});
-$("#endInput").on("dp.change", function (e) {
-    $('#beginInput').data("DateTimePicker").maxDate(e.date);
-    addViewModel.updateAmount()
-});
