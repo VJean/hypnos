@@ -4,11 +4,6 @@
     {{ super() }}
     <style type="text/css">
         body {
-            background-size: cover;
-            background-image: url({{ nugget.img }});
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
         }
 
         .home-item {
@@ -32,8 +27,6 @@
 {% block content %}
     <div class="container">
         <h1>Hello there.</h1>
-        <!-- <a href="{{ nugget.post }}" id="post-link">{{ nugget.title }}</a> -->
-
         <div class="row">
             <div class="col-sm-2">
                 <div class="home-item">
