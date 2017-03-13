@@ -154,7 +154,9 @@ function AddViewModel() {
             place_id: self.selectedPlace().id()
         }
 
-        $.ajax({
+        console.log(night);
+
+        /*$.ajax({
             url: 'http://localhost:5000/api/nights',
             type:"POST",
             data: JSON.stringify(night),
@@ -163,7 +165,7 @@ function AddViewModel() {
             success: function(data){
                 nightsViewModel.add(data['night'])
             }
-        })
+        })*/
     }
 
     self.updateAmount = function() {
@@ -174,7 +176,7 @@ function AddViewModel() {
 }
 
 var nightsViewModel = new NightsViewModel()
-ko.applyBindings(nightsViewModel, $("#main")[0])
+ko.applyBindings(nightsViewModel, $("#table")[0])
 
 var addViewModel = new AddViewModel()
 addViewModel.updateAmount()
