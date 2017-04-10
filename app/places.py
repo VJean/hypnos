@@ -1,5 +1,7 @@
 from app import app, db
-from flask import render_template, jsonify, request, abort
+from flask import render_template, jsonify, request, abort, url_for, redirect
+
+from app.forms import PlaceForm
 
 
 class Place(db.Model):
@@ -9,7 +11,7 @@ class Place(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
 
-    def __init__(self, name, latitude, longitude):
+    def populate(self, name, latitude, longitude):
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
@@ -28,6 +30,14 @@ class Place(db.Model):
         }
 
 
-@app.route('/places', methods=['GET'])
+@app.route('/places', methods=['GET', 'POST'])
 def show_places():
-    return render_template('places.html')
+    form = PlaceForm()
+    if form.validate_on_submit():
+        place = Place()
+        form.populate_obj(place)
+        db.session.add(place)
+        db.session.commit()
+        return redirect(url_for('show_places'))
+
+    return render_template('places2.html', form=form)

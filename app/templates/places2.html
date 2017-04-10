@@ -1,0 +1,8 @@
+{% from "_formhelpers.html" import render_field %}
+<form action="" method="post" name="add">
+  {{ form.hidden_tag() }}
+  {{ render_field(form.name, size=30) }}
+  {{ render_field(form.latitude, size=20) }}
+  {{ render_field(form.longitude, size=20) }}
+  <p><input type="submit" value="Ajouter"></p>
+</form>

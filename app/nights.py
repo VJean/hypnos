@@ -85,5 +85,6 @@ def show_nights():
 
         db.session.add(new_night)
         db.session.commit()
+        print('new night', new_night)
         return redirect(url_for('show_nights'))
     return render_template('nights2.html', form=form)

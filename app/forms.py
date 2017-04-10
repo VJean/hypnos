@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
-from wtforms import DateField, BooleanField, SelectField, DateTimeField
+from wtforms import DateField, BooleanField, SelectField, FloatField, StringField
 from wtforms_components import TimeField
 from wtforms.validators import DataRequired, ValidationError
 
@@ -33,3 +33,9 @@ class NightForm(FlaskForm):
     def validate_amount(form, field):
         if timedelta(hours=field.data.hour, minutes=field.data.minute) > (form.to_rise_datetime() - form.to_bed_datetime()):
             raise ValidationError('La durée de sommeil doit être inférieure à la durée de la nuit.')
+
+
+class PlaceForm(FlaskForm):
+    name = StringField('Nom', validators=[DataRequired()])
+    latitude = FloatField('Latitude', validators=[DataRequired()])
+    longitude = FloatField('Longitude', validators=[DataRequired()])
