@@ -1,12 +1,5 @@
-from flask import redirect
-from flask import url_for
-from datetime import datetime, timedelta
-from app import app, db
-from app.forms import NightForm
-from app.places import Place
-from flask import render_template, jsonify, request, abort
-from sqlalchemy import func
 import isodate
+from app import db
 from app.util import dump_datetime
 
 
@@ -67,24 +60,27 @@ class Night(db.Model):
         }
 
 
-@app.route('/nights', methods=['GET', 'POST'])
-def show_nights():
-    form = NightForm()
-    places = []
-    for p in Place.query.all():
-        places.append((p.id, p.name))
-    form.place.choices = places
-    if form.validate_on_submit():
-        new_night = Night()
-        form.populate_obj(new_night)
+class Place(db.Model):
+    __tablename__ = 'places'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), index=True, unique=True)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
 
-        new_night.to_bed = form.to_bed_datetime()
-        new_night.to_rise = form.to_rise_datetime()
-        new_night.place = Place.query.get(form.place.data)
-        new_night.amount = form.amount_timedelta()
+    def populate(self, name, latitude, longitude):
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
 
-        db.session.add(new_night)
-        db.session.commit()
-        print('new night', new_night)
-        return redirect(url_for('show_nights'))
-    return render_template('nights2.html', form=form)
+    def __repr__(self):
+        return '<Place named %r>' % self.name
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+           'id': self.id,
+           'name': self.name,
+           'lat': self.latitude,
+           'lon': self.longitude
+        }
