@@ -2,7 +2,13 @@ from app import app, db
 from flask import render_template, redirect, url_for
 
 from app.forms import NightForm, PlaceForm
-from app.models import Night, Place
+from app.models import Night, Place, User
+
+# if no user found, create admin from config
+if User.nb_users() == 0:
+    u = app.config['ADMIN_USER']
+    p = app.config['ADMIN_PASSWORD']
+    User.create(u, p)
 
 
 @app.route('/')

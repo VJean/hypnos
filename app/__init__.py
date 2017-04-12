@@ -1,5 +1,7 @@
 import os
 from flask import Flask
+from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -15,6 +17,9 @@ else:
 
 # init models database
 db = SQLAlchemy(app)
+# init user management
+login_manager = LoginManager(app)
+bcrypt = Bcrypt(app)
 
 
 # avoid circular references by calling this import at the end

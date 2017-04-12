@@ -1,5 +1,5 @@
 import isodate
-from app import db
+from app import db, bcrypt
 from app.util import dump_datetime
 
 
@@ -84,3 +84,40 @@ class Place(db.Model):
            'lat': self.latitude,
            'lon': self.longitude
         }
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+    username = db.Column(db.String(30), primary_key=True)
+    password = db.Column(db.String(255), nullable=False)
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.username)
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+    @staticmethod
+    def nb_users():
+        return len(User.query.all())
+
+    @staticmethod
+    def create(username, password):
+        user = User()
+        user.username = username
+        user.password = bcrypt.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        return user
