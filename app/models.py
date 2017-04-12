@@ -120,4 +120,5 @@ class User(db.Model):
         user.password = bcrypt.generate_password_hash(password)
         db.session.add(user)
         db.session.commit()
+        print('Created user %s' % user.username)
         return user
