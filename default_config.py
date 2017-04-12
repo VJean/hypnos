@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 # sqlalchemy
@@ -10,4 +11,4 @@ SECRET_KEY = 'secret-key'
 # auth
 ADMIN_USER = 'admin'
 ADMIN_PASSWORD = 'admin'
-REMEMBER_COOKIE_DURATION = 30
+REMEMBER_COOKIE_DURATION = timedelta(days=30)
