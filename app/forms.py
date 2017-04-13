@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
-from wtforms import DateField, BooleanField, SelectField, FloatField, StringField
+from wtforms import DateField, BooleanField, SelectField, FloatField, StringField, PasswordField
 from wtforms_components import TimeField
 from wtforms.validators import DataRequired, ValidationError
 
@@ -39,3 +39,8 @@ class PlaceForm(FlaskForm):
     name = StringField('Nom', validators=[DataRequired()])
     latitude = FloatField('Latitude', validators=[DataRequired()])
     longitude = FloatField('Longitude', validators=[DataRequired()])
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Identifiant', validators=[DataRequired()])
+    password = PasswordField('Mot de passe', validators=[DataRequired()])
