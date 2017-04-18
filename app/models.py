@@ -1,4 +1,6 @@
 import isodate
+from sqlalchemy.orm import load_only
+
 from app import db, bcrypt
 from app.util import dump_datetime
 
@@ -17,6 +19,13 @@ class Night(db.Model):
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def get_last_date():
+        last = Night.query.options(load_only("day")).order_by(Night.day.desc()).first()
+        if last is None:
+            return None
+        return last.day
 
     def populate(self, day, sleepless, begin, end, amount, alone, place):
         self.day = isodate.parse_date(day)
