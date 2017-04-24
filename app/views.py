@@ -75,13 +75,12 @@ def show_nights():
     for p in Place.query.all():
         places.append((p.id, p.name))
     form.place.choices = places
-    date = Night.get_last_date()
+    last_night = Night.get_last_night()
     nextdate = datetime.date.today()
-    if date is None:
+    if last_night is None:
         pass
     else:
-        nextdate = date + datetime.timedelta(days=1)
-    print(nextdate)
+        nextdate = last_night.day + datetime.timedelta(days=1)
     if form.validate_on_submit():
         new_night = Night()
         form.populate_obj(new_night)
@@ -89,10 +88,9 @@ def show_nights():
         new_night.to_bed = form.to_bed_datetime()
         new_night.to_rise = form.to_rise_datetime()
         new_night.place = Place.query.get(form.place.data)
-        new_night.amount = form.amount_timedelta()
 
         db.session.add(new_night)
         db.session.commit()
         print('new night', new_night)
         return redirect(url_for('show_nights'))
-    return render_template('nights2.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"))
+    return render_template('nights2.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"), last_night=last_night)

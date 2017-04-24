@@ -4,12 +4,14 @@ from wtforms import DateField, BooleanField, SelectField, FloatField, StringFiel
 from wtforms_components import TimeField
 from wtforms.validators import DataRequired, ValidationError
 
+from app.util import TimeDeltaField
+
 
 class NightForm(FlaskForm):
     day = DateField('Date', format='%d/%m/%Y', validators=[DataRequired()])
     to_bed = TimeField('Coucher', format='%H:%M', validators=[DataRequired()])
     to_rise = TimeField('Lever', format='%H:%M', validators=[DataRequired()])
-    amount = TimeField('Durée', format='%H:%M', validators=[DataRequired()])
+    amount = TimeDeltaField('Durée', validators=[DataRequired()])
     alone = BooleanField('Seul')
     sleepless = BooleanField('Nuit blanche')
     place = SelectField('Lieu', coerce=int)
@@ -28,10 +30,11 @@ class NightForm(FlaskForm):
         return datetime.combine(date, rtime)
 
     def amount_timedelta(self):
-        return timedelta(hours=self.amount.data.hour,minutes=self.amount.data.minute)
+        #return timedelta(hours=self.amount.data.hour,minutes=self.amount.data.minute)
+        return self.amount.data
 
     def validate_amount(form, field):
-        if timedelta(hours=field.data.hour, minutes=field.data.minute) > (form.to_rise_datetime() - form.to_bed_datetime()):
+        if field.data > (form.to_rise_datetime() - form.to_bed_datetime()):
             raise ValidationError('La durée de sommeil doit être inférieure à la durée de la nuit.')
 
 

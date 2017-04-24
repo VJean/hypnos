@@ -10,3 +10,15 @@
   {{ render_field(form.sleepless) }}
   <p><input type="submit" value="Ajouter"></p>
 </form>
+{% if last_night %}
+<p>Dernière nuit ajoutée:</p>
+<table>
+    <tr><td>Date</td><td>{{ last_night.day }}</td></tr>
+    <tr><td>Coucher</td><td>{{ last_night.to_bed }}</td></tr>
+    <tr><td>Lever</td><td>{{ last_night.to_rise }}</td></tr>
+    <tr><td>Durée</td><td>{{ last_night.amount }}</td></tr>
+    <tr><td>Lieu</td><td>{{ last_night.place.name }}</td></tr>
+    <tr><td>Alone</td><td>{{ last_night.alone }}</td></tr>
+    <tr><td>Sleepless</td><td>{{ last_night.sleepless }}</td></tr>
+</table>
+{% endif %}

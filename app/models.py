@@ -21,11 +21,16 @@ class Night(db.Model):
         pass
 
     @staticmethod
-    def get_last_date():
-        last = Night.query.options(load_only("day")).order_by(Night.day.desc()).first()
+    def get_last_night():
+        last = Night.query.order_by(Night.day.desc()).first()
         if last is None:
             return None
-        return last.day
+        return last
+
+    @staticmethod
+    def from_date(dref):
+        n = Night.query.filter(Night.day == dref).one_or_none()
+        return n
 
     def populate(self, day, sleepless, begin, end, amount, alone, place):
         self.day = isodate.parse_date(day)
