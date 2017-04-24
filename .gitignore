@@ -1,7 +1,9 @@
 venv/
 bg_urls.json
-app.db
+app*.db
 __pycache__
 app/__pycache__
 *.pyc
 migrations/
+config.py
+.idea/
