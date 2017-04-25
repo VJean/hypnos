@@ -1,5 +1,3 @@
-# Homepage
-_Histoire de recoder la roue..._
+# Hypnos
 
-Une application serveur exposant une api rest, permettant à tout moment (sous couvert d'une connexion internet) de :
-- garder une trace du rythme de sommeil
+Données concernant les nuits passées (coucher, lever, temps de sommeil, endroit, ...).
