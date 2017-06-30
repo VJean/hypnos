@@ -1,7 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
 {% from "_formhelpers.html" import render_field %}
+{% block content %}
 <form action="" method="post" name="add">
   {{ form.hidden_tag() }}
   {{ render_field(form.username, size=20) }}
   {{ render_field(form.password, size=20) }}
   <p><input type="submit" value="Connexion"></p>
 </form>
+{% endblock %}
