@@ -64,7 +64,7 @@ def show_places():
         db.session.commit()
         return redirect(url_for('show_places'))
 
-    return render_template('places2.html', form=form)
+    return render_template('add-place.html', form=form)
 
 
 @app.route('/nights', methods=['GET', 'POST'])
@@ -93,4 +93,4 @@ def show_nights():
         db.session.commit()
         print('new night', new_night)
         return redirect(url_for('show_nights'))
-    return render_template('nights2.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"), last_night=last_night)
+    return render_template('add-night.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"), last_night=last_night)
