@@ -1,0 +1,12 @@
+{% from "_formhelpers.html" import render_field %}
+<form action="" method="post" name="nightform">
+  {{ form.hidden_tag() }}
+  {{ render_field(form.day, size=9) }}
+  {{ render_field(form.to_bed, size=5) }}
+  {{ render_field(form.to_rise, size=5) }}
+  {{ render_field(form.amount, size=5) }}
+  {{ render_field(form.place) }}
+  {{ render_field(form.alone) }}
+  {{ render_field(form.sleepless) }}
+  <p><input type="submit" value="Enregistrer"></p>
+</form>

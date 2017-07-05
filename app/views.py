@@ -67,7 +67,7 @@ def show_places():
     return render_template('add-place.html', form=form)
 
 
-@app.route('/nights', methods=['GET', 'POST'])
+@app.route('/nights/', methods=['GET', 'POST'])
 @login_required
 def show_nights():
     form = NightForm()
@@ -94,3 +94,42 @@ def show_nights():
         print('new night', new_night)
         return redirect(url_for('show_nights'))
     return render_template('add-night.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"), last_night=last_night)
+
+
+@app.route('/nights/<string:datestr>')
+@login_required
+def night(datestr):
+    """
+    Create a night, or edit it if it already exists
+    """
+    try:
+        date = datetime.datetime.strptime(datestr, '%Y%m%d').date()
+    except Exception as e:
+        # TODO redirect to previous page (request.referrer)
+        abort(400)
+
+    # Forbid a date in the future
+    if date > datetime.date.today():
+        # TODO redirect to previous page (request.referrer)
+        abort(400)
+
+    night = Night.from_date(date)
+
+    form = NightForm()
+    places = []
+    for p in Place.query.all():
+        places.append((p.id, p.name))
+    form.place.choices = places
+
+    form.day.data = date
+
+    if night is not None:
+        # populate form with night data
+        form.to_bed.data = night.to_bed.time()
+        form.to_rise.data = night.to_rise.time()
+        form.amount.data = night.amount
+        form.place.data = night.place.id
+        form.alone.data = night.alone
+        form.sleepless.data = night.sleepless
+
+    return render_template('night-form.html', form=form)
