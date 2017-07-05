@@ -5,13 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# try to load conf
+print('Loading default config.')
+app.config.from_object('default_config')
 try:
     app.config.from_object('config')
     print('Loading custom config file.')
 except ImportError:
-    app.config.from_object('default_config')
-    print('No custom config found, loading default file.')
+    print('No custom config found.')
 
 # init models database
 db = SQLAlchemy(app)
