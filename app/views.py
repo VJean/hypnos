@@ -70,25 +70,14 @@ def show_places():
 @app.route('/nights/', methods=['GET', 'POST'])
 @login_required
 def show_nights():
-    form = NightForm()
-    last_night = Night.get_last_night()
-    nextdate = datetime.date.today()
-    if last_night is None:
-        pass
-    else:
-        nextdate = last_night.day + datetime.timedelta(days=1)
-    if form.validate_on_submit():
-        new_night = Night()
-        form.populate_obj(new_night)
+    date = datetime.date.today()
+    datelist = [(date.strftime('%Y%m%d'), date.strftime('%d/%m/%Y'))]
+    dt = datetime.timedelta(days=1)
+    for _ in range(7):
+        date = date - dt
+        datelist.append((date.strftime('%Y%m%d'), date.strftime('%d/%m/%Y')))
 
-        new_night.to_bed = form.to_bed_datetime()
-        new_night.to_rise = form.to_rise_datetime()
-
-        db.session.add(new_night)
-        db.session.commit()
-        print('new night', new_night)
-        return redirect(url_for('show_nights'))
-    return render_template('add-night.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"), last_night=last_night)
+    return render_template('nights-home.html', dates=datelist)
 
 
 @app.route('/nights/<string:datestr>', methods=['GET', 'POST'])

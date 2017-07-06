@@ -1,0 +1,7 @@
+<ul>
+{% for url,str in dates %}
+<li>
+    <a href="{{url_for('night', datestr=url)}}">{{str}}</a>
+</li>
+{% endfor %}
+</ul>
