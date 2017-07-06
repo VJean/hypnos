@@ -87,7 +87,7 @@ class Place(db.Model):
         self.longitude = longitude
 
     def __repr__(self):
-        return '<Place named %r>' % self.name
+        return '({!r}, {!r}) {!s}'.format(self.latitude, self.longitude, self.name)
 
     @property
     def serialize(self):

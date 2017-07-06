@@ -6,6 +6,14 @@ from wtforms.validators import DataRequired, ValidationError
 
 from app.util import TimeDeltaField
 
+from wtforms_alchemy.fields import QuerySelectField
+from app.models import Place
+from app import db
+
+
+def get_places():
+    return Place.query
+
 
 class NightForm(FlaskForm):
     day = DateField('Date', format='%d/%m/%Y', validators=[DataRequired()])
@@ -14,7 +22,7 @@ class NightForm(FlaskForm):
     amount = TimeDeltaField('Durée', validators=[DataRequired()])
     alone = BooleanField('Seul')
     sleepless = BooleanField('Nuit blanche')
-    place = SelectField('Lieu', coerce=int)
+    place = QuerySelectField('Lieu', query_factory=get_places, validators=[DataRequired()])
 
     def to_bed_datetime(self):
         date = self.day.data

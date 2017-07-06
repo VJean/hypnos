@@ -71,10 +71,6 @@ def show_places():
 @login_required
 def show_nights():
     form = NightForm()
-    places = []
-    for p in Place.query.all():
-        places.append((p.id, p.name))
-    form.place.choices = places
     last_night = Night.get_last_night()
     nextdate = datetime.date.today()
     if last_night is None:
@@ -87,7 +83,6 @@ def show_nights():
 
         new_night.to_bed = form.to_bed_datetime()
         new_night.to_rise = form.to_rise_datetime()
-        new_night.place = Place.query.get(form.place.data)
 
         db.session.add(new_night)
         db.session.commit()
@@ -116,10 +111,6 @@ def night(datestr):
     night = Night.from_date(date)
 
     form = NightForm()
-    places = []
-    for p in Place.query.all():
-        places.append((p.id, p.name))
-    form.place.choices = places
 
     if form.validate_on_submit():
         # populate night with form data
@@ -132,7 +123,6 @@ def night(datestr):
 
         night.to_bed = form.to_bed_datetime()
         night.to_rise = form.to_rise_datetime()
-        night.place = Place.query.get(form.place.data)
 
         if is_new_night:
             db.session.add(night)
@@ -150,7 +140,7 @@ def night(datestr):
         form.to_bed.data = night.to_bed.time()
         form.to_rise.data = night.to_rise.time()
         form.amount.data = night.amount
-        form.place.data = night.place.id
+        form.place.data = night.place
         form.alone.data = night.alone
         form.sleepless.data = night.sleepless
 
