@@ -6,5 +6,6 @@ Flask-Script
 Flask-SQLAlchemy
 Flask-WTF
 WTForms-Components
+WTForms-Alchemy
 isodate
 requests
