@@ -96,7 +96,7 @@ def show_nights():
     return render_template('add-night.html', form=form, datestr=nextdate.strftime("%d/%m/%Y"), last_night=last_night)
 
 
-@app.route('/nights/<string:datestr>')
+@app.route('/nights/<string:datestr>', methods=['GET', 'POST'])
 @login_required
 def night(datestr):
     """
@@ -120,6 +120,28 @@ def night(datestr):
     for p in Place.query.all():
         places.append((p.id, p.name))
     form.place.choices = places
+
+    if form.validate_on_submit():
+        # populate night with form data
+        is_new_night = night is None
+
+        if is_new_night:
+            night = Night()
+
+        form.populate_obj(night)
+
+        night.to_bed = form.to_bed_datetime()
+        night.to_rise = form.to_rise_datetime()
+        night.place = Place.query.get(form.place.data)
+
+        if is_new_night:
+            db.session.add(night)
+            print('new night', night)
+        else:
+            print('updated night', night)
+
+        db.session.commit()
+        return redirect(url_for('show_nights'))
 
     form.day.data = date
 
