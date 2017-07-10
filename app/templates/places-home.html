@@ -1,0 +1,9 @@
+<a href="{{url_for('add_place')}}">Ajouter un lieu</a>
+
+<ul>
+{% for p in places %}
+<li>
+    <a href="{{url_for('place', pid=p.id)}}">[{{p.latitude}}, {{p.longitude}}] {{p.name}}</a>
+</li>
+{% endfor %}
+</ul>

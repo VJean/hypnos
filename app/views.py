@@ -53,18 +53,45 @@ def logout():
     return redirect(url_for('homepage'))
 
 
-@app.route('/places', methods=['GET', 'POST'])
+@app.route('/places/', methods=['GET'])
 @login_required
 def show_places():
+    placelist = Place.query.all()
+    return render_template('places-home.html', places=placelist)
+
+
+@app.route('/places/new', methods=['GET', 'POST'])
+@login_required
+def add_place():
     form = PlaceForm()
+    
     if form.validate_on_submit():
         place = Place()
         form.populate_obj(place)
         db.session.add(place)
         db.session.commit()
         return redirect(url_for('show_places'))
+    
+    return render_template('place-form.html', form=form)
 
-    return render_template('add-place.html', form=form)
+
+@app.route('/places/<int:pid>', methods=['GET', 'POST'])
+@login_required
+def place(pid):
+    place = Place.query.get_or_404(pid)
+    form = PlaceForm()
+
+    if form.validate_on_submit():
+        form.populate_obj(place)
+
+        db.session.commit()
+        return redirect(url_for('show_places'))
+
+    form.name.data = place.name
+    form.latitude.data = place.latitude
+    form.longitude.data = place.longitude
+
+    return render_template('place-form.html', form=form)
 
 
 @app.route('/nights/', methods=['GET', 'POST'])
