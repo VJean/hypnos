@@ -4,14 +4,23 @@
     {% block head %}
     <title>{% block title %}{% endblock %} | Home</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendor/spectre.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/hypnos.css') }}">
     {% endblock head %}
 </head>
 <body>
+    <div class="container grid-960">
+    <header class="navbar">
+        <section class="navbar-section">
+            <a href="{{url_for('homepage')}}" class="navbar-brand mr-10">Hypnos</a>
+            <a href="{{url_for('show_nights')}}" class="btn btn-link">Nuits</a>
+            <a href="{{url_for('show_places')}}" class="btn btn-link">Lieux</a>
+        </section>
+        <section class="navbar-section">
+        </section>
+    </header>
     {% block content %}
     {% endblock %}
+    </div>
 </body>
 </html>

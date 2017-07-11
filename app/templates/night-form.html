@@ -1,4 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Nuit{% endblock %}
 {% from "_formhelpers.html" import render_field %}
+{% block content %}
 <form action="" method="post" name="nightform">
   {{ form.hidden_tag() }}
   {{ render_field(form.day, size=9) }}
@@ -10,3 +13,4 @@
   {{ render_field(form.sleepless) }}
   <p><input type="submit" value="Enregistrer"></p>
 </form>
+{% endblock %}

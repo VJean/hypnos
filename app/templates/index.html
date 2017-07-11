@@ -1,43 +1,5 @@
 {% extends "base.html" %}
 {% block title %}Welcome{% endblock %}
-{% block head %}
-    {{ super() }}
-    <style type="text/css">
-        body {
-        }
-
-        .home-item {
-            text-align: center;
-            font-weight: bold;
-            height: 50px;
-            text-align: center;
-            margin: 15px;
-            padding: 15px;
-            background-color: #ffffff;
-            border-width: 1px;
-            border-style: solid;
-            border-color: #dddddd;
-        }
-
-        .home-item a {
-            color: black;
-        }
-    </style>
-{% endblock %}
 {% block content %}
-    <div class="container">
-        <h1>Hello there.</h1>
-        <div class="row">
-            <div class="col-sm-2">
-                <div class="home-item">
-                    <a href="/nights">Nights</a>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="home-item">
-                    <a href="/places">Places</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h1>Bonjour.</h1>
 {% endblock %}
