@@ -26,7 +26,12 @@ def load_user(username):
 
 @app.route('/')
 def homepage():
-    return render_template('index.html')
+    nights = Night.query.order_by(Night.day).all()
+    nb = len(nights)
+    first = nights[0].day
+    last = nights[-1].day
+    nbmissing = nb - (last - first).days - 1
+    return render_template('index.html', nb_nights=nb, first_date=first, last_date=last, nbmissing=nbmissing)
 
 
 @app.route('/login', methods=['GET', 'POST'])
