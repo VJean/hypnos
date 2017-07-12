@@ -25,6 +25,7 @@ def load_user(username):
 
 
 @app.route('/')
+@login_required
 def homepage():
     nights = Night.query.order_by(Night.day).all()
     nb = len(nights)
