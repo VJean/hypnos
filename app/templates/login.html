@@ -5,8 +5,8 @@
 <section class="column col-4">
 <form action="" method="post" name="login">
   {{ form.hidden_tag() }}
-  {{ render_field(form.username, size=20, class="form-input") }}
-  {{ render_field(form.password, size=20, class="form-input") }}
+  {{ render_field(form.username) }}
+  {{ render_field(form.password) }}
   <div class="form-group">
     <input type="submit" value="Connexion" class="btn btn-primary">
   </div>

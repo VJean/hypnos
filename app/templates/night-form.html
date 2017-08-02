@@ -4,13 +4,15 @@
 {% block content %}
 <form action="" method="post" name="nightform">
   {{ form.hidden_tag() }}
-  {{ render_field(form.day, size=9) }}
-  {{ render_field(form.to_bed, size=5) }}
-  {{ render_field(form.to_rise, size=5) }}
-  {{ render_field(form.amount, size=5) }}
+  {{ render_field(form.day) }}
+  {{ render_field(form.to_bed) }}
+  {{ render_field(form.to_rise) }}
+  {{ render_field(form.amount) }}
   {{ render_field(form.place) }}
   {{ render_field(form.alone) }}
   {{ render_field(form.sleepless) }}
-  <p><input type="submit" value="Enregistrer"></p>
+  <div class="form-group">
+    <input type="submit" value="Enregistrer" class="btn btn-primary">
+  </div>
 </form>
 {% endblock %}

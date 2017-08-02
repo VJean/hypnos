@@ -1,6 +1,17 @@
 {% macro render_field(field) %}
     <div class="form-group">
-        {{ field.label(class="form-label") }} {{ field(**kwargs)|safe }}
+        {% if field.type == "BooleanField" %}
+        <label class="form-checkbox">
+            {{ field(**kwargs)|safe }}
+            <i class="form-icon"></i> {{ field.label.text }}
+        </label>
+        {% elif field.type == "QuerySelectField" %}
+        {{ field.label(class="form-label") }}
+        {{ field(class="form-select", **kwargs)|safe }}
+        {% else %}
+        {{ field.label(class="form-label") }}
+        {{ field(class="form-input", **kwargs)|safe }}
+        {% endif %}
     </div>
   {% if field.errors %}
     <ul class=errors>
