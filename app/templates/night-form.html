@@ -4,7 +4,7 @@
 {% block content %}
 <form action="" method="post" name="nightform">
   {{ form.hidden_tag() }}
-  {{ render_field(form.day) }}
+  {{ render_field(form.day, disabled="") }}
   {{ render_field(form.to_bed) }}
   {{ render_field(form.to_rise) }}
   {{ render_field(form.amount) }}

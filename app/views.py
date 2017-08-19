@@ -100,7 +100,7 @@ def place(pid):
     return render_template('place-form.html', form=form)
 
 
-@app.route('/nights/', methods=['GET', 'POST'])
+@app.route('/nights/', methods=['GET'])
 @login_required
 def show_nights():
     date = datetime.date.today()
