@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
 from wtforms import DateField, BooleanField, SelectField, FloatField, StringField, PasswordField
 from wtforms_components import TimeField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import InputRequired, ValidationError
 
 from app.util import TimeDeltaField
 
@@ -16,13 +16,13 @@ def get_places():
 
 
 class NightForm(FlaskForm):
-    day = DateField('Date', format='%d/%m/%Y', validators=[DataRequired()])
-    to_bed = TimeField('Coucher', format='%H:%M', validators=[DataRequired()])
-    to_rise = TimeField('Lever', format='%H:%M', validators=[DataRequired()])
-    amount = TimeDeltaField('Durée', validators=[DataRequired()])
+    day = DateField('Date', format='%d/%m/%Y', validators=[InputRequired()])
+    to_bed = TimeField('Coucher', format='%H:%M', validators=[InputRequired()])
+    to_rise = TimeField('Lever', format='%H:%M', validators=[InputRequired()])
+    amount = TimeDeltaField('Durée', validators=[InputRequired()])
     alone = BooleanField('Seul')
     sleepless = BooleanField('Nuit blanche')
-    place = QuerySelectField('Lieu', query_factory=get_places, validators=[DataRequired()])
+    place = QuerySelectField('Lieu', query_factory=get_places, validators=[InputRequired()])
 
     def to_bed_datetime(self):
         date = self.day.data
@@ -47,11 +47,11 @@ class NightForm(FlaskForm):
 
 
 class PlaceForm(FlaskForm):
-    name = StringField('Nom', validators=[DataRequired()])
-    latitude = FloatField('Latitude', validators=[DataRequired()])
-    longitude = FloatField('Longitude', validators=[DataRequired()])
+    name = StringField('Nom', validators=[InputRequired()])
+    latitude = FloatField('Latitude', validators=[InputRequired()])
+    longitude = FloatField('Longitude', validators=[InputRequired()])
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Identifiant', validators=[DataRequired()])
-    password = PasswordField('Mot de passe', validators=[DataRequired()])
+    username = StringField('Identifiant', validators=[InputRequired()])
+    password = PasswordField('Mot de passe', validators=[InputRequired()])
