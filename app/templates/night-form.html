@@ -2,7 +2,7 @@
 {% block title %}Nuit{% endblock %}
 {% from "_formhelpers.html" import render_field %}
 {% block content %}
-<div class="">
+<div class="column col-12">
 <p>Go to <a href="{{url_for('night',datestr=previous)}}">previous date</a> - Go to <a href="{{url_for('night',datestr=next)}}">next date</a></p>
 
 <form action="" method="post" name="nightform">

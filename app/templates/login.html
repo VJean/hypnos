@@ -2,7 +2,7 @@
 {% block title %}Connexion{% endblock %}
 {% from "_formhelpers.html" import render_field %}
 {% block content %}
-<section class="column col-4">
+<section class="column col-5 col-xs-10 col-mx-auto">
 <form action="" method="post" name="login">
   {{ form.hidden_tag() }}
   {{ render_field(form.username) }}
