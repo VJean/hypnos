@@ -3,11 +3,13 @@
 {% from "_formhelpers.html" import render_field %}
 {% block content %}
 <div class="column col-12">
-<p>Go to <a href="{{url_for('night',datestr=previous)}}">previous date</a> - Go to <a href="{{url_for('night',datestr=next)}}">next date</a></p>
+<h2>{{date}}</h2>
+
+<p><a href="{{url_for('night',datestr=previous)}}">Nuit précédente</a> - <a href="{{url_for('night',datestr=next)}}">Nuit suivante</a></p>
 
 <form action="" method="post" name="nightform">
   {{ form.hidden_tag() }}
-  {{ render_field(form.day, disabled="") }}
+  {# {{ render_field(form.day, disabled="") }} #}
   {{ render_field(form.to_bed) }}
   {{ render_field(form.to_rise) }}
   {{ render_field(form.amount) }}

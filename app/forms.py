@@ -16,7 +16,7 @@ def get_places():
 
 
 class NightForm(FlaskForm):
-    day = DateField('Date', format='%d/%m/%Y', validators=[InputRequired()])
+    day = DateField('Date', format='%d/%m/%Y', validators=[])
     to_bed = TimeField('Coucher', format='%H:%M', validators=[InputRequired()])
     to_rise = TimeField('Lever', format='%H:%M', validators=[InputRequired()])
     amount = TimeDeltaField('Durée', validators=[InputRequired()])
