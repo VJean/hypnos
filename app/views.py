@@ -153,9 +153,11 @@ def night(datestr):
             print('updated night', night)
 
         db.session.commit()
-        return redirect(url_for('show_nights'))
+        return redirect(url_for('night'), datestr=datestr)
 
     form.day.data = date
+    previousd = (date - datetime.timedelta(days=1)).strftime('%Y%m%d')
+    nextd = (date + datetime.timedelta(days=1)).strftime('%Y%m%d')
 
     if night is not None:
         # populate form with night data
@@ -166,4 +168,4 @@ def night(datestr):
         form.alone.data = night.alone
         form.sleepless.data = night.sleepless
 
-    return render_template('night-form.html', form=form)
+    return render_template('night-form.html', form=form, previous=previousd, next=nextd)
