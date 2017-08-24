@@ -3,9 +3,9 @@
 {% from "_formhelpers.html" import render_field %}
 {% block content %}
 <div class="column col-12">
-<h2>{{date}}</h2>
+<h2>{{date|dateformat}}</h2>
 
-<p><a href="{{url_for('night',datestr=previous)}}">Nuit précédente</a> - <a href="{{url_for('night',datestr=next)}}">Nuit suivante</a></p>
+<p><a href="{{url_for('night',date=previous)}}">Nuit précédente</a> - <a href="{{url_for('night',date=next)}}">Nuit suivante</a></p>
 
 <form action="" method="post" name="nightform">
   {{ form.hidden_tag() }}

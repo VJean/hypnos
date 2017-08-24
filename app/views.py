@@ -104,32 +104,21 @@ def place(pid):
 @login_required
 def show_nights():
     date = datetime.date.today()
-    datelist = [(date.strftime('%Y%m%d'), date.strftime('%d/%m/%Y'))]
+    datelist = [date]
     dt = datetime.timedelta(days=1)
     for _ in range(7):
         date = date - dt
-        datelist.append((date.strftime('%Y%m%d'), date.strftime('%d/%m/%Y')))
+        datelist.append(date)
 
     return render_template('nights-home.html', dates=datelist)
 
 
-@app.route('/nights/<string:datestr>', methods=['GET', 'POST'])
+@app.route('/nights/<date:date>', methods=['GET', 'POST'])
 @login_required
-def night(datestr):
+def night(date):
     """
     Create a night, or edit it if it already exists
     """
-    try:
-        date = datetime.datetime.strptime(datestr, '%Y%m%d').date()
-    except Exception as e:
-        # TODO redirect to previous page (request.referrer)
-        abort(400)
-
-    # Forbid a date in the future
-    if date > datetime.date.today():
-        # TODO redirect to previous page (request.referrer)
-        abort(400)
-
     night = Night.from_date(date)
 
     form = NightForm()
@@ -155,10 +144,10 @@ def night(datestr):
             print('updated night', night)
 
         db.session.commit()
-        return redirect(url_for('night', datestr=datestr))
+        return redirect(url_for('night', date=date))
 
-    previousd = (date - datetime.timedelta(days=1)).strftime('%Y%m%d')
-    nextd = (date + datetime.timedelta(days=1)).strftime('%Y%m%d')
+    previousd = date - datetime.timedelta(days=1)
+    nextd = date + datetime.timedelta(days=1)
 
     if night is not None:
         # populate form with night data
@@ -169,4 +158,4 @@ def night(datestr):
         form.alone.data = night.alone
         form.sleepless.data = night.sleepless
 
-    return render_template('night-form.html', form=form, date=date.strftime('%Y%m%d'), previous=previousd, next=nextd)
+    return render_template('night-form.html', form=form, date=date, previous=previousd, next=nextd)

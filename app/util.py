@@ -1,10 +1,30 @@
 from datetime import date, datetime, timedelta
 import isodate
 from urllib.parse import urljoin, urlparse
-
+from werkzeug.routing import BaseConverter, ValidationError
 import re
 from flask import request
 from wtforms import Field, widgets
+
+
+def dateformat(d, format="%d/%m/%Y"):
+    return d.strftime(format)
+
+
+class DateConverter(BaseConverter):
+
+    def to_python(self, value):
+        try:
+            date_of_night = datetime.strptime(value, '%Y%m%d').date()
+        except Exception as e:
+            raise ValidationError()
+        # Forbid a date in the future
+        if date_of_night > date.today():
+            raise ValidationError()
+        return date_of_night
+
+    def to_url(self, value):
+        return value.strftime('%Y%m%d')
 
 
 def dump_datetime(value):

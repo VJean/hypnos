@@ -3,9 +3,9 @@
 {% block content %}
 <div class="column col-12">
 <ul>
-{% for url,str in dates %}
+{% for date in dates %}
 <li>
-    <a href="{{url_for('night', datestr=url)}}">{{str}}</a>
+    <a href="{{url_for('night', date=date)}}">{{date|dateformat}}</a>
 </li>
 {% endfor %}
 </ul>

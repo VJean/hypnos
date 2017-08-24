@@ -3,7 +3,11 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
+from .util import dateformat, DateConverter
+
 app = Flask(__name__)
+app.jinja_env.filters['dateformat'] = dateformat
+app.url_map.converters['date'] = DateConverter
 
 print('Loading default config.')
 app.config.from_object('default_config')

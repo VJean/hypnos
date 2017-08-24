@@ -3,8 +3,8 @@
 {% block content %}
     <section class="column col-12">
     <h2>{{nb_nights}} nuits enregistrées.</h2>
-    <p>Première date : {{first_date}}</p>
-    <p>Dernière nuit ajoutée : {{last_date}}</p>
+    <p>Première date : <a href="{{url_for('night', date=first_date)}}">{{first_date | dateformat}}</a></p>
+    <p>Dernière nuit ajoutée : <a href="{{url_for('night', date=last_date)}}">{{last_date | dateformat}}</a></p>
     {%- if nbmissing > 0 %}
     <p>Il manque {{nbmissing}} entrée(s) entre la première et la dernière nuit.</p>
     {%- endif %}
