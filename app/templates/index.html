@@ -4,9 +4,9 @@
     <section class="column col-12">
     <h1>Bonjour ! Nous sommes le {{today | dateformat}}</h1>
     {% if today != last_date %}
-    <p>La dernière nuit n'a pas été encore enregistrée. <a class="btn btn-primary" href="{{url_for('night', date=today)}}">Ajouter</a></p>
+    <p>La nuit dernière n'a pas été encore enregistrée. <a class="btn btn-primary" href="{{url_for('night', date=today)}}">Ajouter</a></p>
     {% else %}
-    <p>La dernière nuit a été enregistrée</p>
+    <p>La nuit dernière a été enregistrée</p>
     {% endif %}
     <p>{{nb_nights}} nuits enregistrées (<a href="{{url_for('night', date=first_date)}}">{{first_date | dateformat}}</a> à <a href="{{url_for('night', date=last_date)}}">{{last_date | dateformat}}</a>)</p>
     {%- if nbmissing > 0 %}
