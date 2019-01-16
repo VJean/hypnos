@@ -80,7 +80,7 @@ class Place(db.Model):
     name = db.Column(db.String(255), index=True, unique=True)
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    timezone = db.Column(db.String(255))
+    timezone = db.Column(db.String(50))
 
     def populate(self, name, latitude, longitude, timezone):
         self.name = name
