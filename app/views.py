@@ -29,6 +29,9 @@ def load_user(username):
 def homepage():
     nights = Night.query.order_by(Night.day).all()
     nb = len(nights)
+    if nb == 0:
+        return render_template('index.html', nb_nights=nb, today=datetime.date.today())
+
     first = nights[0].day
     last = nights[-1].day
     nbmissing = nb - (last - first).days - 1
