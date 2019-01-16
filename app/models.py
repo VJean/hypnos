@@ -80,11 +80,13 @@ class Place(db.Model):
     name = db.Column(db.String(255), index=True, unique=True)
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
+    timezone = db.Column(db.String(255))
 
-    def populate(self, name, latitude, longitude):
+    def populate(self, name, latitude, longitude, timezone):
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
+        self.timezone = timezone
 
     def __repr__(self):
         return '({!r}, {!r}) {!s}'.format(self.latitude, self.longitude, self.name)
@@ -93,10 +95,11 @@ class Place(db.Model):
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
-           'id': self.id,
-           'name': self.name,
-           'lat': self.latitude,
-           'lon': self.longitude
+            'id': self.id,
+            'name': self.name,
+            'lat': self.latitude,
+            'lon': self.longitude,
+            'tz': self.timezone
         }
 
 
