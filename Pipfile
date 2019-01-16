@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+isodate = "*"
+requests = "*"
+Flask = "*"
+Flask-Bcrypt = "*"
+Flask-Login = "*"
+Flask-Migrate = "*"
+Flask-Script = "*"
+Flask-SQLAlchemy = "*"
+Flask-WTF = "*"
+WTForms-Components = "*"
+WTForms-Alchemy = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
