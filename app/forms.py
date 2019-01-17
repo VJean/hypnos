@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
 from wtforms import DateField, BooleanField, SelectField, FloatField, StringField, PasswordField
 from wtforms_components import TimeField
-from wtforms.validators import InputRequired, ValidationError
+from wtforms.validators import InputRequired, ValidationError, Regexp
 
 from app.util import TimeDeltaField
 
@@ -50,7 +50,7 @@ class PlaceForm(FlaskForm):
     name = StringField('Nom', validators=[InputRequired()])
     latitude = FloatField('Latitude', validators=[InputRequired()])
     longitude = FloatField('Longitude', validators=[InputRequired()])
-    timezone = StringField('Fuseau horaire', validators=[InputRequired()])
+    timezone = StringField('Fuseau horaire', validators=[InputRequired(), Regexp(regex="^[\w/]+$", message="Mauvaise syntaxe. Exemples: Europe/Paris, UTC, ...")])
 
 
 class LoginForm(FlaskForm):
