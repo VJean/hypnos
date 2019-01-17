@@ -96,6 +96,7 @@ def place(pid):
     form.name.data = place.name
     form.latitude.data = place.latitude
     form.longitude.data = place.longitude
+    form.timezone.data = place.timezone
 
     return render_template('place-form.html', form=form)
 
