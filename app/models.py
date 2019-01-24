@@ -15,7 +15,7 @@ class Night(db.Model):
     amount = db.Column(db.Interval)
     alone = db.Column(db.Boolean)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
-    place = db.relationship("Place")
+    place = db.relationship("Place", backref='nights')
 
     def __init__(self):
         pass
@@ -87,7 +87,7 @@ class Place(db.Model):
         self.longitude = longitude
 
     def __repr__(self):
-        return '({!r}, {!r}) {!s}'.format(self.latitude, self.longitude, self.name)
+        return '{!s}'.format(self.name)
 
     @property
     def serialize(self):
