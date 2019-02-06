@@ -10,7 +10,13 @@
 <div class="tile tile-centered">
     <div class="tile-content">
         <div class="tile-title"><a href="{{url_for('place', pid=p.id)}}">{{p.name}}</a></div>
-        <small class="tile-subtitle text-grey">lat: {{p.latitude}}, lon: {{p.longitude}}</small>
+        <small class="tile-subtitle text-grey">lat: {{p.latitude}}, lon: {{p.longitude}} - {{ p.nights|length }} nuits</small>
+    </div>
+    <div class="tile-action">
+        <a href="{{url_for('place', pid=p.id)}}" class="btn">Modifier</a>
+        {% if p.nights|length == 0 %}
+        <a class="btn btn-error">Supprimer</a>
+        {% endif %}
     </div>
 </div>
 </div>
