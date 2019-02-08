@@ -2,14 +2,26 @@
 {% block title %}Lieux{% endblock %}
 {% block content %}
 <div class="column col-12">
-<a href="{{url_for('add_place')}}">Ajouter un lieu</a>
+<a class="btn btn-primary" href="{{url_for('add_place')}}">Ajouter un lieu</a>
 
-<ul>
+<div class="columns">
 {% for p in places %}
-<li>
-    <a href="{{url_for('place', pid=p.id)}}">[{{p.latitude}}, {{p.longitude}}] {{p.name}}</a>
-</li>
+<div class="column col-6 col-xs-12">
+<div class="tile tile-centered">
+    <div class="tile-content">
+        <div class="tile-title"><a href="{{url_for('place', pid=p.id)}}">{{p.name}}</a></div>
+        <small class="tile-subtitle text-grey">lat: {{p.latitude}}, lon: {{p.longitude}} - {{ p.nights|length }} nuits</small>
+    </div>
+    <div class="tile-action">
+        <a href="{{url_for('place', pid=p.id)}}" class="btn">Modifier</a>
+        {% if p.nights|length == 0 %}
+        <a href="{{url_for('delete_place', pid=p.id)}}" class="btn btn-error">Supprimer</a>
+        {% endif %}
+    </div>
+</div>
+</div>
 {% endfor %}
-</ul>
+</div>
+
 </div>
 {% endblock %}

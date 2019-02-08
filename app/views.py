@@ -3,7 +3,7 @@ import datetime
 from flask_login import login_user, logout_user, login_required
 
 from app import app, db, login_manager, bcrypt
-from flask import render_template, redirect, url_for, request, abort
+from flask import render_template, redirect, url_for, request, abort, flash
 
 from app.forms import NightForm, PlaceForm, LoginForm
 from app.models import Night, Place, User
@@ -29,6 +29,9 @@ def load_user(username):
 def homepage():
     nights = Night.query.order_by(Night.day).all()
     nb = len(nights)
+    if nb == 0:
+        return render_template('index.html', nb_nights=nb, today=datetime.date.today())
+
     first = nights[0].day
     last = nights[-1].day
     nbmissing = nb - (last - first).days - 1
@@ -99,6 +102,22 @@ def place(pid):
     form.timezone.data = place.timezone
 
     return render_template('place-form.html', form=form)
+
+
+@app.route('/places/delete/<int:pid>')
+@login_required
+def delete_place(pid):
+    p = Place.query.get_or_404(pid)
+
+    if len(p.nights) == 0:
+        db.session.delete(p)
+        db.session.commit()
+        flash('Suppression de %s effectuée.' % p.name)
+    else:
+        # abort because we are not deleting a place already linked to nights
+        flash('Suppression de %s echouée (en relation avec %d nuits).' % (p.name, len(p.nights)))
+
+    return redirect(url_for('show_places'))
 
 
 @app.route('/nights/', methods=['GET'])
