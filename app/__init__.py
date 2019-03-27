@@ -23,6 +23,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 
+TZ_DB_KEY = app.config['TZ_DB_KEY']
+
 
 # avoid circular references by calling this import at the end
 # (views might reference app)

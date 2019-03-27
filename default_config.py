@@ -8,6 +8,8 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 DEBUG = False
 # flask-wtforms - csrf
 SECRET_KEY = 'secret-key'
+# TimezoneDB API Key
+TZ_DB_KEY = ''
 # auth
 ADMIN_USER = 'admin'
 ADMIN_PASSWORD = 'admin'

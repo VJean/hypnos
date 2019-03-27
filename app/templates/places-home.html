@@ -10,7 +10,9 @@
 <div class="tile tile-centered">
     <div class="tile-content">
         <div class="tile-title"><a href="{{url_for('place', pid=p.id)}}">{{p.name}}</a></div>
-        <small class="tile-subtitle text-grey">lat: {{p.latitude}}, lon: {{p.longitude}} - {{ p.nights|length }} nuits</small>
+        <small class="tile-subtitle text-grey">lat: {{p.latitude}}, lon: {{p.longitude}}<br>
+            {{p.timezone}}<br>
+            {{ p.nights|length }} nuits</small>
     </div>
     <div class="tile-action">
         <a href="{{url_for('place', pid=p.id)}}" class="btn">Modifier</a>

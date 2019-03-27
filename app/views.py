@@ -75,8 +75,8 @@ def add_place():
     form = PlaceForm()
     
     if form.validate_on_submit():
-        place = Place()
-        form.populate_obj(place)
+        place = Place(name=form.name.data, lat=form.latitude.data, lon=form.longitude.data)
+        # form.populate_obj(place)
         db.session.add(place)
         db.session.commit()
         return redirect(url_for('show_places'))
@@ -91,15 +91,14 @@ def place(pid):
     form = PlaceForm()
 
     if form.validate_on_submit():
-        form.populate_obj(place)
-
+        place.update(name=form.name.data, lat=form.latitude.data, lon=form.longitude.data)
+        # form.populate_obj(place)
         db.session.commit()
         return redirect(url_for('show_places'))
 
     form.name.data = place.name
     form.latitude.data = place.latitude
     form.longitude.data = place.longitude
-    form.timezone.data = place.timezone
 
     return render_template('place-form.html', form=form)
 

@@ -50,7 +50,6 @@ class PlaceForm(FlaskForm):
     name = StringField('Nom', validators=[InputRequired()])
     latitude = FloatField('Latitude', validators=[InputRequired()])
     longitude = FloatField('Longitude', validators=[InputRequired()])
-    timezone = StringField('Fuseau horaire', validators=[InputRequired(), Regexp(regex="^[\w/]+$", message="Mauvaise syntaxe. Exemples: Europe/Paris, UTC, ...")])
 
 
 class LoginForm(FlaskForm):
