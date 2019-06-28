@@ -87,11 +87,11 @@ class Place(db.Model):
     @staticmethod
     def find_timezone(lat, lon):
         tzdb_api_key = TZ_DB_KEY
-        call = f"http://api.timezonedb.com/v2.1/get-time-zone?key={tzdb_api_key}&format=json&by=position&lat={lat}&lng={lon}"
+        call = "http://api.timezonedb.com/v2.1/get-time-zone?key={}&format=json&by=position&lat={}&lng={}".format(tzdb_api_key, lat, lon)
         r = requests.get(call)
         rjson = r.json()
         if rjson['status'] != "OK":
-            raise RuntimeError(f"Impossible d'obtenir le fuseau horaire (http://api.timezonedb.com): {rjson['message']}")
+            raise RuntimeError("Impossible d'obtenir le fuseau horaire (http://api.timezonedb.com): {}".format(rjson['message']))
         return rjson['zoneName']
 
     def __init__(self, name, lat, lon):
