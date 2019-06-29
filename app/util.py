@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+import pendulum
 import isodate
 from urllib.parse import urljoin, urlparse
 from werkzeug.routing import BaseConverter, ValidationError
@@ -15,11 +15,11 @@ class DateConverter(BaseConverter):
 
     def to_python(self, value):
         try:
-            date_of_night = datetime.strptime(value, '%Y%m%d').date()
+            date_of_night = pendulum.parse(value, exact=True)
         except Exception as e:
             raise ValidationError()
         # Forbid a date in the future
-        if date_of_night > date.today():
+        if date_of_night > pendulum.today().date():
             raise ValidationError()
         return date_of_night
 
@@ -29,9 +29,9 @@ class DateConverter(BaseConverter):
 
 def dump_datetime(value):
     """Deserialize datetime object into string form for JSON processing."""
-    if isinstance(value, datetime) or isinstance(value, date):
+    if isinstance(value, pendulum.DateTime) or isinstance(value, pendulum.Date):
         return value.isoformat()
-    elif isinstance(value, timedelta):
+    elif isinstance(value, pendulum.Duration):
         return isodate.duration_isoformat(value)
 
     raise TypeError("type not serializable")
@@ -57,7 +57,7 @@ class TimeDeltaField(Field):
             td_str = ' '.join(valuelist)
             try:
                 h, m = re.split(':', td_str)
-                self.data = timedelta(hours=int(h), minutes=int(m))
+                self.data = pendulum.Duration(hours=int(h), minutes=int(m))
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Not a valid timedelta value'))

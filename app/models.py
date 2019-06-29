@@ -1,7 +1,7 @@
 import isodate
+import pendulum
 import requests
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import load_only
 
 from app import db, bcrypt, TZ_DB_KEY
 from app.util import dump_datetime
@@ -35,21 +35,18 @@ class Night(db.Model):
         return n
 
     def populate(self, day, sleepless, begin, end, amount, alone, place):
-        self.day = isodate.parse_date(day)
+        self.day = pendulum.parse(day, exact=True)
         self.alone = alone
         self.place = place
         self.sleepless = sleepless
         if self.sleepless:
             self.to_bed = None
             self.to_rise = None
-            self.amount = isodate.parse_duration("PT0H0M")
+            self.amount = pendulum.Duration()
         else:
-            self.to_bed = isodate.parse_datetime(begin)
-            self.to_rise = isodate.parse_datetime(end)
-            if amount == "":
-                self.amount = self.to_rise - self.to_bed
-            else:
-                self.amount = isodate.parse_duration(amount)
+            self.to_bed = pendulum.parse(begin)
+            self.to_rise = pendulum.parse(end)
+            self.amount = isodate.parse_duration(amount)
 
     def __repr__(self):
         return '<Night ending on the %s>' % (self.day)

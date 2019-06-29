@@ -1,4 +1,4 @@
-import datetime
+import pendulum
 
 from flask_login import login_user, logout_user, login_required
 
@@ -30,12 +30,12 @@ def homepage():
     nights = Night.query.order_by(Night.day).all()
     nb = len(nights)
     if nb == 0:
-        return render_template('index.html', nb_nights=nb, today=datetime.date.today())
+        return render_template('index.html', nb_nights=nb, today=pendulum.today())
 
     first = nights[0].day
     last = nights[-1].day
     nbmissing = nb - (last - first).days - 1
-    return render_template('index.html', nb_nights=nb, today=datetime.date.today(), first_date=first, last_date=last, nbmissing=nbmissing)
+    return render_template('index.html', nb_nights=nb, today=pendulum.today(), first_date=first, last_date=last, nbmissing=nbmissing)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -122,14 +122,13 @@ def delete_place(pid):
 @app.route('/nights/', methods=['GET'])
 @login_required
 def show_nights():
-    date = datetime.date.today()
-    datelist = [date]
-    dt = datetime.timedelta(days=1)
+    date = pendulum.today()
+    date_list = [date]
     for _ in range(7):
-        date = date - dt
-        datelist.append(date)
+        date = date.subtract(days=1)
+        date_list.append(date)
 
-    return render_template('nights-home.html', dates=datelist)
+    return render_template('nights-home.html', dates=date_list)
 
 
 @app.route('/nights/<date:date>', methods=['GET', 'POST'])
@@ -165,8 +164,8 @@ def night(date):
         db.session.commit()
         return redirect(url_for('night', date=date))
 
-    previousd = date - datetime.timedelta(days=1)
-    nextd = date + datetime.timedelta(days=1)
+    previousd = date.subtract(days=1)
+    nextd = date.add(days=1)
 
     if night is not None:
         # populate form with night data

@@ -15,6 +15,7 @@ Flask-SQLAlchemy = "*"
 Flask-WTF = "*"
 WTForms-Components = "*"
 WTForms-Alchemy = "*"
+pendulum = "*"
 
 [dev-packages]
 

@@ -1,14 +1,14 @@
+import pendulum
 from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
-from wtforms import DateField, BooleanField, SelectField, FloatField, StringField, PasswordField
+from wtforms import DateField, BooleanField, FloatField, StringField, PasswordField
 from wtforms_components import TimeField
-from wtforms.validators import InputRequired, ValidationError, Regexp
+from wtforms.validators import InputRequired, ValidationError
 
 from app.util import TimeDeltaField
 
 from wtforms_alchemy.fields import QuerySelectField
 from app.models import Place
-from app import db
 
 
 def get_places():
@@ -30,19 +30,26 @@ class NightForm(FlaskForm):
         rtime = self.to_rise.data
         if btime > rtime:
             date = date - timedelta(days=1)
+        # Keep it timezone unaware, as we store the local time in the nights table
+        # and the timezone in the places table
         return datetime.combine(date, btime)
 
     def to_rise_datetime(self):
         date = self.day.data
         rtime = self.to_rise.data
+        # Keep it timezone unaware, as we store the local time in the nights table
+        # and the timezone in the places table
         return datetime.combine(date, rtime)
 
     def amount_timedelta(self):
-        #return timedelta(hours=self.amount.data.hour,minutes=self.amount.data.minute)
         return self.amount.data
 
     def validate_amount(form, field):
-        if field.data > (form.to_rise_datetime() - form.to_bed_datetime()):
+        # take timezone into account in case of DST
+        timezone = form.place.data.timezone
+        to_rise_with_tz = pendulum.instance(form.to_rise_datetime(), tz=timezone)
+        to_bed_with_tz = pendulum.instance(form.to_bed_datetime(), tz=timezone)
+        if field.data > (to_rise_with_tz - to_bed_with_tz).as_interval():
             raise ValidationError('La durée de sommeil doit être inférieure à la durée de la nuit.')
 
 
