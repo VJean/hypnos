@@ -7,3 +7,4 @@ app/__pycache__
 migrations/
 config.py
 .idea/
+Pipfile.lock
