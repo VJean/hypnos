@@ -16,8 +16,9 @@ Flask-WTF = "*"
 WTForms-Components = "*"
 WTForms-Alchemy = "*"
 pendulum = "*"
+# Jinja2 < 2.10.1 is vulnerable, str.format_map allows a sandbox escape
+Jinja2 = ">=2.10.1"
+# urllib3 < 1.24.2 : SSL vuln
+urllib3 = ">=1.24.2"
 
 [dev-packages]
-
-[requires]
-python_version = "3.7"
