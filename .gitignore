@@ -1,4 +1,5 @@
 venv/
+.venv/
 bg_urls.json
 app*.db
 __pycache__
