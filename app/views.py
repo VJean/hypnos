@@ -35,7 +35,7 @@ def homepage():
     first = nights[0].day
     last = nights[-1].day
     nbmissing = nb - (last - first).days - 1
-    return render_template('index.html', nb_nights=nb, today=pendulum.today(), first_date=first, last_date=last, nbmissing=nbmissing)
+    return render_template('index.html', nb_nights=nb, today=pendulum.today().date(), first_date=first, last_date=last, nbmissing=nbmissing)
 
 
 @app.route('/login', methods=['GET', 'POST'])
