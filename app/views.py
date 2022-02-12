@@ -177,3 +177,8 @@ def night(date):
         form.sleepless.data = night.sleepless
 
     return render_template('night-form.html', form=form, date=date, previous=previousd, next=nextd)
+
+@app.route('/stats')
+@login_required
+def stats():
+    return render_template('stats.html')
