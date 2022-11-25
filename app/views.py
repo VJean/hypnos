@@ -75,7 +75,7 @@ def add_place():
     form = PlaceForm()
     
     if form.validate_on_submit():
-        place = Place(name=form.name.data, lat=form.latitude.data, lon=form.longitude.data)
+        place = Place(name=form.name.data, lat=form.latitude.data, lon=form.longitude.data, archived=False)
         # form.populate_obj(place)
         db.session.add(place)
         db.session.commit()
@@ -101,6 +101,20 @@ def place(pid):
     form.longitude.data = place.longitude
 
     return render_template('place-form.html', form=form)
+
+
+@app.route('/places/archive/<int:pid>')
+@login_required
+def archive_place(pid):
+    """
+    Toggle the place's archived status.
+    """
+    p = Place.query.get_or_404(pid)
+
+    p.archived = not p.archived
+    db.session.commit()
+
+    return redirect(url_for('show_places'))
 
 
 @app.route('/places/delete/<int:pid>')
