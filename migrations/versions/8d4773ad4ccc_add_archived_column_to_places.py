@@ -1,8 +1,8 @@
-"""Add archived column for places
+"""Add archived column to places
 
-Revision ID: 3b4f6248d2d6
+Revision ID: 8d4773ad4ccc
 Revises: 13b09aff19df
-Create Date: 2022-11-26 15:01:18.947584
+Create Date: 2022-11-26 15:27:10.413149
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3b4f6248d2d6'
+revision = '8d4773ad4ccc'
 down_revision = '13b09aff19df'
 branch_labels = None
 depends_on = None
@@ -22,7 +22,7 @@ def upgrade():
         batch_op.create_unique_constraint(batch_op.f('uq_nights_day'), ['day'])
 
     with op.batch_alter_table('places', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('archived', sa.Boolean(), nullable=True))
+        batch_op.add_column(sa.Column('archived', sa.Boolean(), server_default='0', nullable=False))
 
     # ### end Alembic commands ###
 
