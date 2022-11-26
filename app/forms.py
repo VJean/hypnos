@@ -11,8 +11,8 @@ from wtforms_alchemy.fields import QuerySelectField
 from app.models import Place
 
 
-def get_places():
-    return Place.query
+def get_active_places():
+    return Place.query.filter(Place.archived == False)
 
 
 class NightForm(FlaskForm):
@@ -22,7 +22,7 @@ class NightForm(FlaskForm):
     amount = TimeDeltaField('Durée', validators=[InputRequired()])
     alone = BooleanField('Seul')
     sleepless = BooleanField('Nuit blanche')
-    place = QuerySelectField('Lieu', query_factory=get_places, validators=[InputRequired()])
+    place = QuerySelectField('Lieu', query_factory=get_active_places, validators=[InputRequired()])
 
     def to_bed_datetime(self):
         date = self.day.data
