@@ -16,6 +16,9 @@
     </div>
     <div class="tile-action">
         <a href="{{url_for('place', pid=p.id)}}" class="btn">Modifier</a>
+        <a href="{{url_for('archive_place', pid=p.id)}}" class="btn">
+            {% if p.archived %}Activer{% else %}Désactiver{% endif %}
+        </a>
         {% if p.nights|length == 0 %}
         <a href="{{url_for('delete_place', pid=p.id)}}" class="btn btn-error">Supprimer</a>
         {% endif %}
