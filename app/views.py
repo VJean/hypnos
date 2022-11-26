@@ -75,7 +75,7 @@ def add_place():
     form = PlaceForm()
     
     if form.validate_on_submit():
-        place = Place(name=form.name.data, lat=form.latitude.data, lon=form.longitude.data, archived=False)
+        place = Place(name=form.name.data, lat=form.latitude.data, lon=form.longitude.data)
         # form.populate_obj(place)
         db.session.add(place)
         db.session.commit()
