@@ -77,7 +77,7 @@ class Place(db.Model):
     __tablename__ = 'places'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), index=True, unique=True)
-    archived = db.Column(db.Boolean)
+    archived = db.Column(db.Boolean, nullable=False, server_default='0')
     _latitude = db.Column(db.Float)
     _longitude = db.Column(db.Float)
     _timezone = db.Column(db.String(50))
