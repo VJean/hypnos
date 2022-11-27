@@ -18,7 +18,7 @@ WTForms-Alchemy = "^0.18"
 WTForms-Components = "^0.10"
 isodate = "0.6.0"
 requests = "2.23.0"
-pendulum = "2.1.0"
+pendulum = "^2.1"
 
 [build-system]
 requires = ["poetry-core"]
