@@ -16,11 +16,26 @@
 <div id="map" style="height: 180px"></div>
 
 <script>
-    var map = L.map('map').setView([51.505, -0.09], 13);
+    var map = L.map('map').setView([48.88, 2.35], 9);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
+    var myItems = [
+    {% for p in places -%}
+    {{p.serialize | tojson}},
+    {% endfor -%}
+    ];
+
+    for (var i = 0; i < myItems.length; i++) {
+        var item = myItems[i];
+
+        L.marker([item["lat"],item["lon"]])
+            .bindPopup(item["name"])
+            .addTo(map);
+    }
+
 </script>
 
 <div class="columns">
