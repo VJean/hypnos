@@ -2,6 +2,13 @@
 
 Données concernant les nuits passées (coucher, lever, temps de sommeil, endroit, ...).
 
+## Setup and development
+
+```
+poetry shell
+FLASK_ENV=development flask run
+```
+
 ## Flask-Migrate notes
 
 This project uses SQLite, which has limited implementation of `ALTER TABLE` statements.
