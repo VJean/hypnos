@@ -10,13 +10,15 @@ from app.models import Night, Place, User
 from app.util import is_safe_url
 
 login_manager.login_view = 'login'
-db.create_all()
 
-# if no user found, create admin from config
-if User.nb_users() == 0:
-    u = app.config['ADMIN_USER']
-    p = app.config['ADMIN_PASSWORD']
-    User.create(u, p)
+with app.app_context():
+    db.create_all()
+
+    # if no user found, create admin from config
+    if User.nb_users() == 0:
+        u = app.config['ADMIN_USER']
+        p = app.config['ADMIN_PASSWORD']
+        User.create(u, p)
 
 
 @login_manager.user_loader

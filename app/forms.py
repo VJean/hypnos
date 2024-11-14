@@ -49,7 +49,7 @@ class NightForm(FlaskForm):
         timezone = form.place.data.timezone
         to_rise_with_tz = pendulum.instance(form.to_rise_datetime(), tz=timezone)
         to_bed_with_tz = pendulum.instance(form.to_bed_datetime(), tz=timezone)
-        if field.data > (to_rise_with_tz - to_bed_with_tz).as_interval():
+        if field.data > (to_rise_with_tz - to_bed_with_tz):
             raise ValidationError('La durée de sommeil doit être inférieure à la durée de la nuit.')
 
 
