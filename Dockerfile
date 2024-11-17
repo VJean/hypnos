@@ -1,6 +1,6 @@
 # Inspired from https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
 
-FROM python:3.12-slim AS python-base
+FROM python:3.12 AS python-base
 
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -21,6 +21,10 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_CACHE_DIRE=/tmp/poetry_cache \
     # read by installation script
     POETRY_VERSION=1.8.3 \
+    # uwsgi
+    # slim build: remove the need for libxml2 dependency
+    # see https://github.com/unbit/uwsgi/issues/2687
+    UWSGI_PROFILE_OVERRIDE="xml=false" \
     \
     # paths
     # this is where our requirements + virtual environment will live
@@ -50,6 +54,4 @@ COPY --from=python-base ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 COPY app ./app
 COPY migrations ./migrations
 
-
-# No need for poetry to just run our script once all deps are installed in the prevous stage
-ENTRYPOINT ["python", "-m", "flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT ["uwsgi", "--socket", "/shared/hypnos.sock", "--manage-script-name", "--module", "app:app", "--master", "--processes", "2"]
