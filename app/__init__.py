@@ -11,13 +11,8 @@ app = Flask(__name__)
 app.jinja_env.filters['dateformat'] = dateformat
 app.url_map.converters['date'] = DateConverter
 
-print('Loading default config.')
-app.config.from_object('app.default_config')
-try:
-    app.config.from_object('app.config')
-    print('Loading custom config file.')
-except ImportError:
-    print('No custom config found.')
+print('Loading config')
+app.config.from_object('app.config')
 
 # SQL constraints naming convention
 convention = {

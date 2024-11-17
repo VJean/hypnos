@@ -4,5 +4,5 @@ app*.db
 __pycache__
 app/__pycache__
 *.pyc
-config.py
 .idea/
+hypnos.env

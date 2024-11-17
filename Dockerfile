@@ -47,7 +47,8 @@ RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
 FROM python:3.12-slim AS runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    HYPNOS_DB_PATH="/data/app.db"
 
 COPY --from=python-base ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
