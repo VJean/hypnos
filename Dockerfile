@@ -60,4 +60,4 @@ COPY --from=python-base ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 COPY app ./app
 COPY migrations ./migrations
 
-ENTRYPOINT ["uwsgi", "--socket", "/shared/hypnos.sock", "--manage-script-name", "--module", "app:app", "--master", "--processes", "2"]
+ENTRYPOINT ["uwsgi", "--socket", ":3031", "--manage-script-name", "--module", "app:app", "--master", "--processes", "2"]
