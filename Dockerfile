@@ -32,6 +32,11 @@ ENV PYTHONUNBUFFERED=1 \
     VENV_PATH="/opt/pysetup/.venv"
 # https://github.com/orgs/python-poetry/discussions/1879#discussioncomment-216868
 
+# the cryptography pypi package needs the Rust toolchain to be built
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# make cargo visible
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 RUN pip install poetry==1.8.3
 
 WORKDIR /app
