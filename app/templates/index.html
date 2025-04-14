@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendor/spectre-0.5.8/spectre-icons.min.css') }}">
 {% endblock %}
 {% block content %}
-    <section class="column col-12">
+    <section class="column col-8 col-md-12 col-mx-auto">
     <h1>Bonjour ! Nous sommes le {{today | dateformat}}</h1>
     {% if nb_nights == 0 %}
         <p>Ajouter la première nuit : <a class="btn btn-primary" href="{{url_for('night', date=today)}}">Ajouter</a></p>
