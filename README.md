@@ -20,7 +20,7 @@ FLASK_ENV=development flask --env-file my-vars.env run
 
 The docker image exposes a wsgi application through http, so that a NGINX reverse-proxy is easy to plug in.
 ```
-docker build . -t hypnos:x.y.z
+docker build . -t hypnos:x.y.z # add --load when using buildx
 # multi-arch build: docker buildx build --platform linux/amd64,linux/arm64 --load -t hypnos:0.1.0 .
 docker run --env-file my-vars.env -v hypnos_data:/data hypnos:x.y.z
 ```
