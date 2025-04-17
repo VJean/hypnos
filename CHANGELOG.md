@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Properly count and display how many nights are missing
+
 ## 0.2.0 - 2025-04-16
 
 ### Added

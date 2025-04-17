@@ -36,7 +36,7 @@ def homepage():
 
     first = nights[0].day
     last = nights[-1].day
-    nbmissing = nb - (last - first).days - 1
+    nbmissing = (last - first).days - 1 - nb
     return render_template('index.html', nb_nights=nb, today=pendulum.today().date(), first_date=first, last_date=last, nbmissing=nbmissing)
 
 
