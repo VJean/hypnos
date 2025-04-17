@@ -5,6 +5,8 @@
     <title>{% block title %}{% endblock %} | Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendor/spectre-0.5.8/spectre.min.css') }}">
+    <!-- useful to build internal urls in javascript files without having to render with Jinja; see https://flask.palletsprojects.com/en/stable/patterns/javascript/ -->
+    <script>const SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/hypnos.css') }}">
     {% endblock head %}
 </head>
