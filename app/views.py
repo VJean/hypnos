@@ -8,6 +8,7 @@ from flask import render_template, redirect, url_for, request, abort, flash
 from app.forms import NightForm, PlaceForm, LoginForm
 from app.models import Night, Place, User
 from app.util import is_safe_url
+from app.stats import last_seven_nights, avg_sleep_all_time
 
 login_manager.login_view = 'login'
 
@@ -19,7 +20,6 @@ with app.app_context():
         u = app.config['ADMIN_USER']
         p = app.config['ADMIN_PASSWORD']
         User.create(u, p)
-
 
 @login_manager.user_loader
 def load_user(username):
@@ -37,7 +37,21 @@ def homepage():
     first = nights[0].day
     last = nights[-1].day
     nbmissing = (last - first).days - 1 - nb
-    return render_template('index.html', nb_nights=nb, today=pendulum.today().date(), first_date=first, last_date=last, nbmissing=nbmissing)
+
+    last_seven_nights_data = last_seven_nights()
+    avg_sleep_all_time_data = avg_sleep_all_time()
+
+    return render_template(
+        'index.html',
+        nb_nights=nb,
+        today=pendulum.today().date(),
+        first_date=first,
+        last_date=last,
+        nbmissing=nbmissing,
+        last_seven_nights_sleep_amount=last_seven_nights_data["sleep"],
+        last_seven_nights_in_bed_duration=last_seven_nights_data["in_bed"],
+        avg_sleep_all_time=avg_sleep_all_time_data
+    )
 
 
 @app.route('/login', methods=['GET', 'POST'])
