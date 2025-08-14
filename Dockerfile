@@ -1,6 +1,6 @@
 # Inspired from https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
 
-FROM python:3.12 AS python-base
+FROM python:3.13 AS python-base
 
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -20,7 +20,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     POETRY_CACHE_DIRE=/tmp/poetry_cache \
     # read by installation script
-    POETRY_VERSION=1.8.3 \
+    POETRY_VERSION=2.1.4 \
     # uwsgi
     # slim build: remove the need for libxml2 dependency
     # see https://github.com/unbit/uwsgi/issues/2687
@@ -49,7 +49,7 @@ RUN touch README.md
 # poetry install no-root to only install dependencies
 RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
 
-FROM python:3.12-slim AS runtime
+FROM python:3.13-slim AS runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
